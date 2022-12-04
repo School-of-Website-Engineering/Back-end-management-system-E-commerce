@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0 (2022-12-04)
+
+
+### update
+
+* update ([f6054cc](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/commit/f6054cc57b6c1f5c7218d9637f835bb918a46949))
+
 ## [1.0.2](https://github.com/School-of-Website-Engineering/Progressive-Tune/compare/v1.0.1...v1.0.2) (2022-12-02)
 
 
