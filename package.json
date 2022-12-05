@@ -42,7 +42,76 @@
     "parserOptions": {
       "parser": "@babel/eslint-parser"
     },
-    "rules": {}
+    "rules": {},
+    "root": true,
+    "env" : {
+      "browser": true,
+      "node   ": true,
+      "es2021 ": true,
+      "es6    ": true
+    },
+    "extends": ["plugin:vue/essential"],
+
+    "plugins": ["@typescript-eslint"],
+
+    "parserOptions": { "parser": "babel-eslint" },
+    "plugins"      : ["vue"],
+    "rules"        : {
+      "eqeqeq": "off",
+
+      "curly": "error",
+
+      "quotes": ["error", "double"],
+
+      "arrow-parens": 0,
+
+      "generator-star-spacing": 0,
+
+      "no-unused-vars": "error",
+
+
+      "indent": [2, 4, { "SwitchCase": 1 }],
+
+      "space-before-function-paren": ["error", "never"],
+
+      "no-constant-condition": ["warn"],
+
+      "no-empty": ["off"],
+
+      "comma-spacing": ["error", { "after": true }],
+
+      "key-spacing": [
+        "error",
+        {
+          "singleLine": {},
+          "multiLine" : { "align": "colon" }
+        }
+      ],
+
+      "object-curly-newline" : ["error", { "multiline": true }],
+      "array-bracket-newline": ["error", { "multiline": true }],
+
+      "curly": ["error", "all"],
+
+      "no-unused-vars": ["warn"],
+
+
+      "quotes"           : ["error", "double"],
+      "indent"           : ["error", "tab"],
+      "linebreak-style": ["error", "windows"],
+
+      "brace-style": ["error", "stroustrup", { "allowSingleLine": false }],
+
+      "space-infix-ops": ["error"],
+
+      "comma-dangle": ["warn", "never"]
+    },
+    "overrides": [
+      {
+        "files": ["*.vue"],
+        "rules": { "vue/multi-word-component-names": 0 }
+      }
+    ]
   },
   "browserslist": [
     "> 1%",
