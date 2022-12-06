@@ -1,7 +1,8 @@
 module.exports = {
+
 	"printWidth": 100, // 设置prettier单行输出（不折行）的（最大）长度
 
-	"tabWidth": 8, // 设置工具每一个水平缩进的空格数
+	"tabWidth": 4, // 设置工具每一个水平缩进的空格数
 
 	"useTabs": true, // 使用tab（制表位）缩进而非空格
 
