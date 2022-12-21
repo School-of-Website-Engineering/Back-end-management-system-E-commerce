@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/compare/v1.0.0...v1.0.1) (2022-12-21)
+
+
+### update
+
+* update ([26330ef](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/commit/26330efc26da17e9ee6a5bb62fedf509b7711146))
+
 ## 1.0.0 (2022-12-04)
 
 
