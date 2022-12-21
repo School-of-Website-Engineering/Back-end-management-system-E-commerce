@@ -10,4 +10,5 @@ module.exports = {
 			".pista.top"   // .是二级域名的通配符
 		]
 	}
+	
 };
