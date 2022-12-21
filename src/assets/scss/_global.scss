@@ -1,0 +1,52 @@
+@import "./_reset";
+@import "./color";
+
+$content-width: 1200px;
+$component-height: 32px;
+// 高度塌陷修复
+.clearfix::after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+/* reset */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: content-box;
+	text-decoration: none;
+	list-style: none;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* 容器 */
+.container {
+	width: $content-width;
+	margin: 0 auto;
+}
+
+// 盒模型标准
+*,
+*::before,
+*::after {
+	box-sizing: content-box;
+}
+
+html {
+	-webkit-tap-highlight-color: transparent;
+	-webkit-text-size-adjust: 100%;
+}
+
+// body基准
+body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	min-width: $content-width;
+	height: 100%;
+	background-color: $aw-color-gray-7;
+	color: $black;
+	line-height: 1.375;
+}
