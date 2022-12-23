@@ -9,31 +9,29 @@ let originPush = VueRouter.prototype.push;
 let originReplace = VueRouter.prototype.replace;
 
 //重写VueRouter.prototype身上的push方法
-VueRouter.prototype.push = function(location, resolve, reject) {
+VueRouter.prototype.push = function (location, resolve, reject) {
 	if (reject && resolve) {
 		originPush.call(this, location, resolve, reject);
-	}
-	else {
+	} else {
 		originPush.call(
 			this,
 			location,
 			() => {},
-			() => {}
+			() => {},
 		);
 	}
 };
 
 //重写VueRouter.prototype身上的replace方法
-VueRouter.prototype.replace = function(location, resolve, reject) {
+VueRouter.prototype.replace = function (location, resolve, reject) {
 	if (reject && resolve) {
 		originReplace.call(this, location, resolve, reject);
-	}
-	else {
+	} else {
 		originReplace.call(
 			this,
 			location,
 			() => {},
-			() => {}
+			() => {},
 		);
 	}
 };
@@ -42,7 +40,7 @@ let router = new VueRouter({
 	routes,
 	scrollBehavior() {
 		return { y: 0 };
-	}
+	},
 });
 
 export default router;
