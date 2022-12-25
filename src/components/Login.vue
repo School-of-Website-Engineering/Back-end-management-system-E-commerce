@@ -3,22 +3,35 @@
 		<div class="login-box">
 			<!--头像-->
 			<div class="avatar-box">
-				<img src="../assets/logo.png" alt="" />
+				<img src="../assets/logo.png" alt=""/>
 			</div>
 			<!--登录表单区-->
-			<el-form label-width="0px" class="login-form">
+			<el-form
+				label-width="0px"
+				class="login-form"
+				:model="loginForm"
+				:rules="loginRules"
+				ref="loginFormRef"
+			>
 				<!--用户名 -->
-				<el-form-item>
-					<el-input prefix-icon="iconfont icon-user"></el-input>
+				<el-form-item prop="username">
+					<el-input
+						prefix-icon="iconfont icon-user"
+						v-model="loginForm.username"
+					></el-input>
 				</el-form-item>
 				<!--密码-->
-				<el-form-item>
-					<el-input prefix-icon="iconfont icon-3702mima"></el-input>
+				<el-form-item prop="password">
+					<el-input
+						prefix-icon="iconfont icon-3702mima"
+						v-model="loginForm.password"
+						type="password"
+					></el-input>
 				</el-form-item>
 				<!-- 按钮区域 -->
 				<el-form-item class="btns">
 					<el-button type="primary">登录</el-button>
-					<el-button type="info">重置</el-button>
+					<el-button type="info" @click="resetLoginForm">重置</el-button>
 				</el-form-item>
 			</el-form>
 		</div>
@@ -26,7 +39,44 @@
 </template>
 
 <script>
-export default { name: "Login" };
+export default {
+	name: "Login",
+	data() {
+		return {
+			//登录表单对象
+			loginForm: {
+				username: "",
+				password: ""
+			},
+			loginRules: {
+				username: [
+					{required: true, message: "用户名不能为空", trigger: "blur"},
+					{
+						min: 3,
+						max: 10,
+						message: "用户名长度在3-10个字符之间",
+						trigger: "blur"
+					}
+				],
+				password: [
+					{
+						min: 6,
+						max: 10,
+						message: "长度在 6 到 10 个字符",
+						trigger: "blur"
+					},
+					{required: true, message: "密码不能为空", trigger: "blur"}
+				]
+			}
+		};
+	},
+	methods: {
+		//重置登录表单
+		resetLoginForm() {
+			this.$refs.loginFormRef.resetFields();
+		}
+	}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -35,6 +85,7 @@ export default { name: "Login" };
 	background-color: #2b4b6b;
 	height: 100vh;
 }
+
 //登录盒子居中
 .login-box {
 	width: 420px;
@@ -46,6 +97,7 @@ export default { name: "Login" };
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -50%);
+	
 	.avatar-box {
 		height: 130px;
 		width: 130px;
@@ -56,6 +108,7 @@ export default { name: "Login" };
 		position: absolute;
 		left: 50%;
 		transform: translate(-50%, -50%);
+		
 		img {
 			height: 100%;
 			width: 100%;
@@ -63,11 +116,12 @@ export default { name: "Login" };
 			background-color: #eee;
 		}
 	}
-
+	
 	.btns {
 		display: flex;
 		justify-content: flex-end;
 	}
+	
 	.login-form {
 		position: absolute;
 		bottom: 0;
