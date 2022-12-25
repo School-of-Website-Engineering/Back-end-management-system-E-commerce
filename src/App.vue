@@ -9,6 +9,5 @@ export default {name: "App"}
 </script>
 
 <style>
-@import './assets/scss/global.scss';
 
 </style>

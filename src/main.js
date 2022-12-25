@@ -7,6 +7,12 @@ import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 Vue.use(ElementUI);
 
+//导入图标字体
+import "./assets/fonts/iconfont.css";
+
+//全局样式表
+import "./assets/scss/global.scss";
+
 Vue.config.productionTip = false;
 
 new Vue({ router, render: (h) => h(App) }).$mount("#app");

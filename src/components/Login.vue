@@ -1,9 +1,26 @@
 <template>
 	<div class="login-container">
 		<div class="login-box">
+			<!--头像-->
 			<div class="avatar-box">
 				<img src="../assets/logo.png" alt="" />
 			</div>
+			<!--登录表单区-->
+			<el-form label-width="0px" class="login-form">
+				<!--用户名 -->
+				<el-form-item>
+					<el-input prefix-icon="iconfont icon-user"></el-input>
+				</el-form-item>
+				<!--密码-->
+				<el-form-item>
+					<el-input prefix-icon="iconfont icon-3702mima"></el-input>
+				</el-form-item>
+				<!-- 按钮区域 -->
+				<el-form-item class="btns">
+					<el-button type="primary">登录</el-button>
+					<el-button type="info">重置</el-button>
+				</el-form-item>
+			</el-form>
 		</div>
 	</div>
 </template>
@@ -20,8 +37,8 @@ export default { name: "Login" };
 }
 //登录盒子居中
 .login-box {
-	width: 500px;
-	height: 500px;
+	width: 420px;
+	height: 300px;
 	background-color: #fff;
 	border-radius: 5px;
 	//定位居中
@@ -45,6 +62,18 @@ export default { name: "Login" };
 			border-radius: 50%;
 			background-color: #eee;
 		}
+	}
+
+	.btns {
+		display: flex;
+		justify-content: flex-end;
+	}
+	.login-form {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		padding: 0 20px;
+		box-sizing: border-box;
 	}
 }
 </style>
