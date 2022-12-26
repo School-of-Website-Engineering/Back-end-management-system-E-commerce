@@ -1,13 +1,13 @@
 export default [
 	//重定向
 	{
-		path    : "/",
-		redirect: "/login"
+		path: "/",
+		redirect: "/login",
 	},
 	//导入登录组件
 	{
-		path     : "/login",
+		path: "/login",
 		component: () => import("@/components/Login"),
-		name     : "login"
-	}
+		name: "login",
+	},
 ];
