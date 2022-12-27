@@ -9,5 +9,11 @@ export default [
 		path     : "/login",
 		component: () => import("@/components/Login"),
 		name     : "login"
+	},
+	//导入主页组件
+	{
+		path     : "/home",
+		component: () => import("@/components/Home"),
+		name     : "home"
 	}
 ];
