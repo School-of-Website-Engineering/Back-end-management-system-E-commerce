@@ -38,10 +38,27 @@ VueRouter.prototype.replace = function(location, resolve, reject) {
 	}
 };
 
+
 let router = new VueRouter({
 	routes,
 	scrollBehavior() {
 		return { y: 0 };
+	}
+});
+
+//路由导航守卫
+router.beforeEach((to, from, next) => {
+	//如果要去的是登录页，直接放行
+	if (to.path === "/login") {
+		return next();
+	}
+	//如果要去的不是登录页，判断是否有token
+	let token = sessionStorage.getItem("token");
+	if (token) {
+		next();
+	}
+	else {
+		next("/login");
 	}
 });
 

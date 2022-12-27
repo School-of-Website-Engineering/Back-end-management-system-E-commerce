@@ -90,7 +90,7 @@ export default {
 				//登陆成功
 				this.$message.success("登录成功");
 				//将token保存到本地
-				localStorage.setItem("token", res.data.token);
+				sessionStorage.setItem("token", res.data.token);
 				//跳转到后台首页
 				this.$router.push("/home");
 			});
