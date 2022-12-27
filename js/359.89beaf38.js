@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkBack_end_management_system_E_commerce"]=self["webpackChunkBack_end_management_system_E_commerce"]||[]).push([[359],{8359:function(e,n,t){t.r(n),t.d(n,{default:function(){return l}});var o=function(){var e=this,n=e._self._c;return n("div",[n("el-button",{attrs:{type:"danger"},on:{click:e.logout}},[e._v("退出")])],1)},s=[],c=(t(7658),{name:"Home",methods:{logout(){window.sessionStorage.clear(),this.$router.push("/login")}}}),r=c,u=t(1001),a=(0,u.Z)(r,o,s,!1,null,"3ef0c867",null),l=a.exports}}]);
+//# sourceMappingURL=359.89beaf38.js.map
