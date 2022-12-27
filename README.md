@@ -76,10 +76,10 @@
 
 ## 如何贡献
 
-非常欢迎你的加入！[提一个 Issue](https://github.com/School-of-Automation-Engineering/Progressive-Tune/issues) 或者提交一个
+非常欢迎你的加入！[提一个 Issue](https://github.com/School-of-Automation-Engineering/Back-end-management-system-E-commerce/issues) 或者提交一个
 Pull Request。
 
-Progressive-Tune 遵循 [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/) 行为规范。
+Back-end-management-system-E-commerce 遵循 [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/) 行为规范。
 
 ### 贡献者
 
