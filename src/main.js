@@ -7,6 +7,12 @@ import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 Vue.use(ElementUI);
 
+//导入axios
+import axios from "axios";
+//配置axios的基础路径
+axios.defaults.baseURL = "https://lianghj.top:8888/api/private/v1/";
+Vue.prototype.$http = axios;
+
 //导入图标字体
 import "./assets/fonts/iconfont.css";
 
