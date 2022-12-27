@@ -52,16 +52,16 @@ export default {
 				username: [
 					{required: true, message: "用户名不能为空", trigger: "blur"},
 					{
-						min: 3,
-						max: 10,
+						min    : 3,
+						max    : 10,
 						message: "用户名长度在3-10个字符之间",
 						trigger: "blur"
 					}
 				],
 				password: [
 					{
-						min: 6,
-						max: 10,
+						min    : 6,
+						max    : 10,
 						message: "长度在 6 到 10 个字符",
 						trigger: "blur"
 					},
