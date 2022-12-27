@@ -18,6 +18,7 @@
 					<el-input
 						prefix-icon="iconfont icon-user"
 						v-model="loginForm.username"
+						value="admin"
 					></el-input>
 				</el-form-item>
 				<!--密码-->
@@ -26,6 +27,7 @@
 						prefix-icon="iconfont icon-3702mima"
 						v-model="loginForm.password"
 						type="password"
+						value="123456"
 					></el-input>
 				</el-form-item>
 				<!-- 按钮区域 -->

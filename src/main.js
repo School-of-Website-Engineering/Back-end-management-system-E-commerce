@@ -12,6 +12,11 @@ import axios from "axios";
 //配置axios的基础路径
 axios.defaults.baseURL = "https://lianghj.top:8888/api/private/v1/";
 Vue.prototype.$http = axios;
+//请求拦截器
+axios.interceptors.request.use(config => {
+	config.headers.Authorization = window.sessionStorage.getItem("token");
+	return config;
+})
 
 //导入图标字体
 import "./assets/fonts/iconfont.css";
