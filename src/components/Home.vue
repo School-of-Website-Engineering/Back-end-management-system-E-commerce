@@ -12,12 +12,16 @@
 		<!-- 页面主体 -->
 		<el-container>
 			<!-- 侧边栏 -->
-			<el-aside width="200px">
+			<el-aside :width="collapse ? '64px' : '200px'">
+				<div class="toggle-button" @click="toggleCollapse">|||</div>
 				<el-menu
 					background-color="#333744"
 					text-color="#fff"
 					active-text-color="#409bff"
-					unique-opened="true"
+					:unique-opened="true"
+					:collapse="collapse"
+					:collapse-transition="false"
+					:router="true"
 				>
 					<!-- 一级菜单 -->
 					<el-submenu :index="item.id + ''" v-for="item in menulist" :key="item.id">
@@ -27,7 +31,7 @@
 							<span>{{item.authName}}</span>
 						</template>
 						<!-- 二级菜单 -->
-						<el-menu-item :index="subItem.id + ''" v-for="subItem in item.children" :key="subItem.id">
+						<el-menu-item :index="'/' + subItem.path + ''" v-for="subItem in item.children" :key="subItem.id">
 							<template slot="title">
 								<i class="el-icon-menu"></i>
 								<span>{{ subItem.authName }}</span>
@@ -37,7 +41,9 @@
 				</el-menu>
 			</el-aside>
 			<!-- 右侧内容主体区域 -->
-			<el-main></el-main>
+			<el-main>
+				<router-view></router-view>
+			</el-main>
 		</el-container>
 	</el-container>
 </template>
@@ -56,7 +62,9 @@ export default {
 				"101": "iconfont icon-shangpin",
 				"102": "iconfont icon-danju",
 				"145": "iconfont icon-baobiao"
-			}
+			},
+			//是否折叠
+			collapse: false
 		};
 	},
 	created() {
@@ -75,6 +83,10 @@ export default {
 				return this.$message.error(res.meta.msg);
 			}
 			this.menulist = res.data;
+		},
+		//点击按钮切换侧边栏折叠与展开
+		toggleCollapse() {
+			this.collapse = !this.collapse;
 		}
 	}
 };
@@ -102,6 +114,9 @@ export default {
 }
 .el-aside {
 	background-color: #333744;
+	.el-menu{
+		border-right: none;
+	}
 }
 .el-main {
 	background-color: #eaedf1;
@@ -111,5 +126,14 @@ export default {
 }
 .iconfont{
 	margin-right: 10px;
+}
+.toggle-button{
+	background-color: #4A5064;
+	font-size: 10px;
+	line-height: 24px;
+	text-align: center;
+	letter-spacing: .2em;
+	color: #fff;
+	cursor: pointer;
 }
 </style>

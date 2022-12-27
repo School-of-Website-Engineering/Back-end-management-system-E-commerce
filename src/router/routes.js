@@ -14,6 +14,15 @@ export default [
 	{
 		path     : "/home",
 		component: () => import("@/components/Home"),
-		name     : "home"
+		name     : "home",
+		redirect : "/welcome",
+		children : [
+			{
+			//导入欢迎组件
+				path     : "/welcome",
+				component: () => import("@/components/Welcome"),
+				name     : "welcome"
+			}
+		]
 	}
 ];
