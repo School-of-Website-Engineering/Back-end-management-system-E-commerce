@@ -12,12 +12,24 @@
 			<el-row :gutter="20">
 				<el-col :span="8">
 					<!-- 搜索 -->
-					<el-input placeholder="请输入内容" class="input-with-select">
-						<el-button slot="append" icon="el-icon-search"></el-button>
+					<el-input
+						placeholder="请输入内容"
+						class="input-with-select"
+						v-model="queryInfo.query"
+						clearable
+						@clear="getUserList"
+					>
+						<el-button
+							slot="append"
+							icon="el-icon-search"
+							@click="getUserList"
+						></el-button>
 					</el-input>
 				</el-col>
 				<el-col :span="4">
-					<el-button type="primary">添加用户</el-button>
+					<el-button type="primary" @click="addDialogVisible = true"
+						>添加用户</el-button
+					>
 				</el-col>
 			</el-row>
 			<!-- 用户列表 -->
@@ -30,7 +42,11 @@
 				<el-table-column label="角色" prop="role_name"></el-table-column>
 				<el-table-column label="状态">
 					<template v-slot="scope">
-						<el-switch v-model="scope.row.mg_state"> </el-switch>
+						<el-switch
+							@change="userStateChanged(scope.row)"
+							v-model="scope.row.mg_state"
+						>
+						</el-switch>
 					</template>
 				</el-table-column>
 				<el-table-column label="操作">
@@ -61,7 +77,7 @@
 				</el-table-column>
 			</el-table>
 			<!-- 分页 -->
-			<br>
+			<br />
 			<el-pagination
 				@size-change="handleSizeChange"
 				@current-change="handleCurrentChange"
@@ -73,6 +89,23 @@
 			>
 			</el-pagination>
 		</el-card>
+		<!-- //添加用户对话框 -->
+		<el-dialog
+			title="提示"
+			:visible.sync="addDialogVisible"
+			width="30%"
+			:before-close="handleClose"
+		>
+			<!-- main -->
+			<span>这是一段信息</span>
+			<!-- 底部内容 -->
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="addDialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="addDialogVisible = false"
+					>确 定</el-button
+				>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -82,14 +115,16 @@ export default {
 		return {
 			//获取用户列表的参数
 			queryInfo: {
-				query   : "",
-				pagenum : 1,
-				pagesize: 2
+				query: "",
+				pagenum: 1,
+				pagesize: 2,
 			},
 			//用户列表数据
 			userList: [],
 			//总数据
-			total   : 0
+			total: 0,
+			//添加用户框的显示与隐藏
+			addDialogVisible: false,
 		};
 	},
 	created() {
@@ -97,7 +132,9 @@ export default {
 	},
 	methods: {
 		async getUserList() {
-			const { data: res } = await this.$http.get("users", {params: this.queryInfo});
+			const { data: res } = await this.$http.get("users", {
+				params: this.queryInfo,
+			});
 			//数据获取失败
 			if (res.meta.status !== 200) {
 				return this.$message.error("获取用户列表失败");
@@ -114,8 +151,20 @@ export default {
 		handleCurrentChange(val) {
 			this.queryInfo.pagenum = val;
 			this.getUserList();
-		}
-	}
+		},
+		//用户状态改变
+		async userStateChanged(userInfo) {
+			const { data: result } = await this.$http.put(
+				`users/${userInfo.id}/state/${userInfo.mg_state}`,
+			);
+			//修改失败
+			if (result.meta.status !== 200) {
+				userInfo.mg_state = !userInfo.mg_state;
+				return this.$message.error("修改用户状态失败");
+			}
+			this.$message.success("修改用户状态成功");
+		},
+	},
 };
 </script>
 
