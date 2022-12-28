@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkBack_end_management_system_E_commerce"]=self["webpackChunkBack_end_management_system_E_commerce"]||[]).push([[338],{7820:function(e,n,c){c.r(n),c.d(n,{default:function(){return m}});var t=function(){var e=this,n=e._self._c;return n("div")},s=[],u={},_=u,a=c(1001),r=(0,a.Z)(_,t,s,!1,null,"4fc4e4b6",null),m=r.exports}}]);
-//# sourceMappingURL=338.f2085056.js.map
