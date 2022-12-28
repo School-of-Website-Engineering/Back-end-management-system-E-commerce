@@ -112,6 +112,26 @@
 <script>
 export default {
 	data() {
+		//邮箱规则
+		var checkEmail = (rule, value, cb) => {
+			const regEmail = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+			if (!regEmail.test(value)) {
+				cb(new Error("邮箱格式不正确"));
+			}
+			else {
+				cb();
+			}
+		};
+		//手机号规则
+		var checkMobile = (rule, value, cb) => {
+			const regMobile = /^1[3-9]\d{9}$/;
+			if (!regMobile.test(value)) {
+				cb(new Error("手机号格式不正确"));
+			}
+			else {
+				cb();
+			}
+		};
 		return {
 			//获取用户列表的参数
 			queryInfo: {
@@ -125,6 +145,37 @@ export default {
 			total: 0,
 			//添加用户框的显示与隐藏
 			addDialogVisible: false,
+			//用户的表单数据
+			addForm         : {
+				username: "",
+				password: "",
+				email   : "",
+				mobile  : ""
+			},
+			//表单验证对象
+			addFormRules: {
+				username: [
+					{ required: true, message: "请输入用户名", trigger: "blur" },
+					{ min: 3, max: 10, message: "长度在3到10个字符", trigger: "blur" }
+				],
+				password: [
+					{ required: true, message: "请输入密码", trigger: "blur" },
+					{ min: 6, max: 12, message: "长度在6到12个字符", trigger: "blur" }
+				],
+				email: [
+					{ required: true, message: "请输入邮箱", trigger: "blur" },
+					{ type: "email", message: "请输入正确的邮箱格式", trigger: "blur" },
+					{ validator: checkEmail, trigger: "blur" }
+				],
+				mobile: [
+					{ required: true, message: "请输入手机号", trigger: "blur" },
+					{
+						message: "请输入正确的手机号",
+						trigger: "blur"
+					},
+					{ validator: checkMobile, trigger: "blur" }
+				]
+			}
 		};
 	},
 	created() {
