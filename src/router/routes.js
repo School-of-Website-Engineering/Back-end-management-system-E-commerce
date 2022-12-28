@@ -22,6 +22,12 @@ export default [
 				path     : "/welcome",
 				component: () => import("@/components/Welcome"),
 				name     : "welcome"
+			},
+			{
+			//导入用户组件
+				path     : "/users",
+				component: () => import("@/components/user/Users"),
+				name     : "users"
 			}
 		]
 	}
