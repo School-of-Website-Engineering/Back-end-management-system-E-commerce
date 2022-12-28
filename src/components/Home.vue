@@ -22,16 +22,26 @@
 					:collapse="collapse"
 					:collapse-transition="false"
 					:router="true"
+					:default-active="activePath"
 				>
 					<!-- 一级菜单 -->
-					<el-submenu :index="item.id + ''" v-for="item in menulist" :key="item.id">
+					<el-submenu
+						:index="item.id + ''"
+						v-for="item in menulist"
+						:key="item.id"
+					>
 						<!-- 模板区域 -->
 						<template slot="title">
 							<i :class="iconsObj[item.id]"></i>
-							<span>{{item.authName}}</span>
+							<span>{{ item.authName }}</span>
 						</template>
 						<!-- 二级菜单 -->
-						<el-menu-item :index="'/' + subItem.path + ''" v-for="subItem in item.children" :key="subItem.id">
+						<el-menu-item
+							:index="'/' + subItem.path + ''"
+							v-for="subItem in item.children"
+							:key="subItem.id"
+							@click="saveNavState('/' + subItem.path)"
+						>
 							<template slot="title">
 								<i class="el-icon-menu"></i>
 								<span>{{ subItem.authName }}</span>
@@ -64,11 +74,14 @@ export default {
 				"145": "iconfont icon-baobiao"
 			},
 			//是否折叠
-			collapse: false
+			collapse  : false,
+			//被激活的链接地址
+			activePath: ""
 		};
 	},
 	created() {
-		this.getMenuList()
+		this.getMenuList();
+		this.activePath = window.sessionStorage.getItem("activePath");
 	},
 	methods: {
 		//	退出登录
@@ -78,7 +91,7 @@ export default {
 		},
 		//	获取菜单列表
 		async getMenuList() {
-			const {data: res} = await this.$http.get("menus");
+			const { data: res } = await this.$http.get("menus");
 			if (res.meta.status !== 200) {
 				return this.$message.error(res.meta.msg);
 			}
@@ -87,6 +100,11 @@ export default {
 		//点击按钮切换侧边栏折叠与展开
 		toggleCollapse() {
 			this.collapse = !this.collapse;
+		},
+		//保存链接的激活状态
+		saveNavState(path) {
+			window.sessionStorage.setItem("activePath", path);
+			this.path = path;
 		}
 	}
 };
@@ -114,7 +132,7 @@ export default {
 }
 .el-aside {
 	background-color: #333744;
-	.el-menu{
+	.el-menu {
 		border-right: none;
 	}
 }
@@ -124,15 +142,15 @@ export default {
 .home-container {
 	height: 100vh;
 }
-.iconfont{
+.iconfont {
 	margin-right: 10px;
 }
-.toggle-button{
-	background-color: #4A5064;
+.toggle-button {
+	background-color: #4a5064;
 	font-size: 10px;
 	line-height: 24px;
 	text-align: center;
-	letter-spacing: .2em;
+	letter-spacing: 0.2em;
 	color: #fff;
 	cursor: pointer;
 }
