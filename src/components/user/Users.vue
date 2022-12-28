@@ -12,16 +12,7 @@
 			<el-row :gutter="20">
 				<el-col :span="8">
 					<!-- 搜索 -->
-					<el-input
-						placeholder="请输入内容"
-						v-model="input3"
-						class="input-with-select"
-					>
-						<el-select v-model="select" slot="prepend" placeholder="请选择">
-							<el-option label="餐厅名" value="1"></el-option>
-							<el-option label="订单号" value="2"></el-option>
-							<el-option label="用户电话" value="3"></el-option>
-						</el-select>
+					<el-input placeholder="请输入内容" class="input-with-select">
 						<el-button slot="append" icon="el-icon-search"></el-button>
 					</el-input>
 				</el-col>
@@ -29,16 +20,110 @@
 					<el-button type="primary">添加用户</el-button>
 				</el-col>
 			</el-row>
+			<!-- 用户列表 -->
+			<br />
+			<el-table :data="userList" border stripe>
+				<el-table-column type="index" label="#"></el-table-column>
+				<el-table-column label="姓名" prop="username"></el-table-column>
+				<el-table-column label="邮箱" prop="email"></el-table-column>
+				<el-table-column label="电话" prop="mobile"></el-table-column>
+				<el-table-column label="角色" prop="role_name"></el-table-column>
+				<el-table-column label="状态">
+					<template v-slot="scope">
+						<el-switch v-model="scope.row.mg_state"> </el-switch>
+					</template>
+				</el-table-column>
+				<el-table-column label="操作">
+					<template v-slot="scope">
+						<el-button
+							type="primary"
+							icon="el-icon-edit"
+							size="mini"
+						></el-button>
+						<el-button
+							type="danger"
+							icon="el-icon-delete"
+							size="mini"
+						></el-button>
+						<el-tooltip
+							effect="dark"
+							content="分配角色"
+							placement="top"
+							:enterable="false"
+						>
+							<el-button
+								type="warning"
+								icon="el-icon-setting"
+								size="mini"
+							></el-button>
+						</el-tooltip>
+					</template>
+				</el-table-column>
+			</el-table>
+			<!-- 分页 -->
+			<br>
+			<el-pagination
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				:current-page="queryInfo.pagenum"
+				:page-sizes="[1, 2, 3, 4]"
+				:page-size="queryInfo.pagesize"
+				layout="total, sizes, prev, pager, next, jumper"
+				:total="400"
+			>
+			</el-pagination>
 		</el-card>
 	</div>
 </template>
 
 <script>
-export default {};
+export default {
+	data() {
+		return {
+			//获取用户列表的参数
+			queryInfo: {
+				query   : "",
+				pagenum : 1,
+				pagesize: 2
+			},
+			//用户列表数据
+			userList: [],
+			//总数据
+			total   : 0
+		};
+	},
+	created() {
+		this.getUserList();
+	},
+	methods: {
+		async getUserList() {
+			const { data: res } = await this.$http.get("users", {params: this.queryInfo});
+			//数据获取失败
+			if (res.meta.status !== 200) {
+				return this.$message.error("获取用户列表失败");
+			}
+			this.userList = res.data.users;
+			this.total = res.data.total;
+		},
+		//页码改变
+		handleSizeChange(val) {
+			this.queryInfo.pagesize = val;
+			this.getUserList();
+		},
+		//页码值改变
+		handleCurrentChange(val) {
+			this.queryInfo.pagenum = val;
+			this.getUserList();
+		}
+	}
+};
 </script>
 
 <style scoped lang="scss">
 .el-card {
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+}
+.el-table {
+	font-size: 14px;
 }
 </style>
