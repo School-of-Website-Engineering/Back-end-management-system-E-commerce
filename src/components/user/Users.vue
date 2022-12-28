@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars*/
 <template>
 	<div>
 		<!--面包屑导航-->
@@ -50,7 +51,7 @@
 					</template>
 				</el-table-column>
 				<el-table-column label="操作">
-					<template v-slot="scope">
+					<template v-slot="{}">
 						<el-button
 							type="primary"
 							icon="el-icon-edit"
@@ -90,14 +91,27 @@
 			</el-pagination>
 		</el-card>
 		<!-- //添加用户对话框 -->
-		<el-dialog
-			title="提示"
-			:visible.sync="addDialogVisible"
-			width="30%"
-			:before-close="handleClose"
-		>
+		<el-dialog title="添加用户" :visible.sync="addDialogVisible" width="30%">
 			<!-- main -->
-			<span>这是一段信息</span>
+			<el-form
+				:model="addForm"
+				:rules="addFormRules"
+				ref="addFormRef"
+				label-width="70px"
+			>
+				<el-form-item label="用户名" prop="username">
+					<el-input v-model="addForm.username"></el-input>
+				</el-form-item>
+				<el-form-item label="密码" prop="password">
+					<el-input v-model="addForm.password"></el-input>
+				</el-form-item>
+				<el-form-item label="邮箱" prop="email">
+					<el-input v-model="addForm.email"></el-input>
+				</el-form-item>
+				<el-form-item label="手机" prop="mobile">
+					<el-input v-model="addForm.mobile"></el-input>
+				</el-form-item>
+			</el-form>
 			<!-- 底部内容 -->
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="addDialogVisible = false">取 消</el-button>
@@ -115,16 +129,46 @@ export default {
 		return {
 			//获取用户列表的参数
 			queryInfo: {
-				query: "",
-				pagenum: 1,
-				pagesize: 2,
+				query   : "",
+				pagenum : 1,
+				pagesize: 2
 			},
 			//用户列表数据
-			userList: [],
+			userList        : [],
 			//总数据
-			total: 0,
+			total           : 0,
 			//添加用户框的显示与隐藏
 			addDialogVisible: false,
+			//用户的表单数据
+			addForm         : {
+				username: "",
+				password: "",
+				email   : "",
+				mobile  : ""
+			},
+			//表单验证对象
+			addFormRules: {
+				username: [
+					{ required: true, message: "请输入用户名", trigger: "blur" },
+					{ min: 3, max: 10, message: "长度在3到10个字符", trigger: "blur" }
+				],
+				password: [
+					{ required: true, message: "请输入密码", trigger: "blur" },
+					{ min: 6, max: 12, message: "长度在6到12个字符", trigger: "blur" }
+				],
+				email: [
+					{ required: true, message: "请输入邮箱", trigger: "blur" },
+					{ type: "email", message: "请输入正确的邮箱格式", trigger: "blur" }
+				],
+				mobile: [
+					{ required: true, message: "请输入手机号", trigger: "blur" },
+					{
+						pattern: /^1[3456789]\d{9}$/,
+						message: "请输入正确的手机号",
+						trigger: "blur"
+					}
+				]
+			}
 		};
 	},
 	created() {
@@ -132,9 +176,7 @@ export default {
 	},
 	methods: {
 		async getUserList() {
-			const { data: res } = await this.$http.get("users", {
-				params: this.queryInfo,
-			});
+			const { data: res } = await this.$http.get("users", {params: this.queryInfo});
 			//数据获取失败
 			if (res.meta.status !== 200) {
 				return this.$message.error("获取用户列表失败");
@@ -155,7 +197,7 @@ export default {
 		//用户状态改变
 		async userStateChanged(userInfo) {
 			const { data: result } = await this.$http.put(
-				`users/${userInfo.id}/state/${userInfo.mg_state}`,
+				`users/${userInfo.id}/state/${userInfo.mg_state}`
 			);
 			//修改失败
 			if (result.meta.status !== 200) {
@@ -163,8 +205,9 @@ export default {
 				return this.$message.error("修改用户状态失败");
 			}
 			this.$message.success("修改用户状态成功");
-		},
-	},
+		}
+		// 表单验证
+	}
 };
 </script>
 

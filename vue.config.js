@@ -1,5 +1,8 @@
 const { defineConfig } = require("@vue/cli-service");
-module.exports = defineConfig({ transpileDependencies: true });
+module.exports = defineConfig({
+	transpileDependencies: true,
+	lintOnSave           : false
+});
 module.exports = {
 	lintOnSave: false,
 	publicPath: "/Back-end-management-system-E-commerce/",
