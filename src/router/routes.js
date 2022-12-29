@@ -34,6 +34,12 @@ export default [
 				path     : "/rights",
 				component: () => import("@/components/power/Rights"),
 				name     : "rights"
+			},
+			//导入角色组件
+			{
+				path     : "/roles",
+				component: () => import("@/components/power/Roles"),
+				name     : "roles"
 			}
 		]
 	}
