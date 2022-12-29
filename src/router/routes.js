@@ -28,6 +28,12 @@ export default [
 				path     : "/users",
 				component: () => import("@/components/user/Users"),
 				name     : "users"
+			},
+			//导入权限组件
+			{
+				path     : "/rights",
+				component: () => import("@/components/power/Rights"),
+				name     : "rights"
 			}
 		]
 	}
