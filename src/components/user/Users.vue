@@ -56,6 +56,7 @@
 							type="primary"
 							icon="el-icon-edit"
 							size="mini"
+							@click="showEditDialog()"
 						></el-button>
 						<el-button
 							type="danger"
@@ -91,7 +92,12 @@
 			</el-pagination>
 		</el-card>
 		<!-- //添加用户对话框 -->
-		<el-dialog title="添加用户" :visible.sync="addDialogVisible" width="30%">
+		<el-dialog
+			title="添加用户"
+			:visible.sync="addDialogVisible"
+			width="30%"
+			@close="addDialogClosed"
+		>
 			<!-- main -->
 			<el-form
 				:model="addForm"
@@ -115,7 +121,15 @@
 			<!-- 底部内容 -->
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="addDialogVisible = false">取 消</el-button>
-				<el-button type="primary" @click="addDialogVisible = false"
+				<el-button type="primary" @click="addUser">确 定</el-button>
+			</span>
+		</el-dialog>
+		<!-- //修改用户对话框 -->
+		<el-dialog title="修改用户" :visible.sync="editDialogVisible" width="50%">
+			<span>这是一段信息</span>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="editDialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="editDialogVisible = false"
 					>确 定</el-button
 				>
 			</span>
@@ -149,47 +163,48 @@ export default {
 		return {
 			//获取用户列表的参数
 			queryInfo: {
-				query   : "",
-				pagenum : 1,
-				pagesize: 2
+				query: "",
+				pagenum: 1,
+				pagesize: 2,
 			},
 			//用户列表数据
-			userList        : [],
+			userList: [],
 			//总数据
-			total           : 0,
+			total: 0,
 			//添加用户框的显示与隐藏
 			addDialogVisible: false,
 			//用户的表单数据
-			addForm         : {
+			addForm: {
 				username: "",
 				password: "",
-				email   : "",
-				mobile  : ""
+				email: "",
+				mobile: "",
 			},
 			//表单验证对象
 			addFormRules: {
 				username: [
 					{ required: true, message: "请输入用户名", trigger: "blur" },
-					{ min: 3, max: 10, message: "长度在3到10个字符", trigger: "blur" }
+					{ min: 3, max: 10, message: "长度在3到10个字符", trigger: "blur" },
 				],
 				password: [
 					{ required: true, message: "请输入密码", trigger: "blur" },
-					{ min: 6, max: 12, message: "长度在6到12个字符", trigger: "blur" }
+					{ min: 6, max: 12, message: "长度在6到12个字符", trigger: "blur" },
 				],
 				email: [
 					{ required: true, message: "请输入邮箱", trigger: "blur" },
 					{ type: "email", message: "请输入正确的邮箱格式", trigger: "blur" }
-
 				],
 				mobile: [
 					{ required: true, message: "请输入手机号", trigger: "blur" },
 					{
 						pattern: /^1[3456789]\d{9}$/,
 						message: "请输入正确的手机号",
-						trigger: "blur"
-					}
-				]
-			}
+						trigger: "blur",
+					},
+				],
+			},
+			//修改用户框的显示与隐藏
+			editDialogVisible: false,
 		};
 	},
 	created() {
@@ -197,7 +212,9 @@ export default {
 	},
 	methods: {
 		async getUserList() {
-			const { data: res } = await this.$http.get("users", {params: this.queryInfo});
+			const { data: res } = await this.$http.get("users", {
+				params: this.queryInfo,
+			});
 			//数据获取失败
 			if (res.meta.status !== 200) {
 				return this.$message.error("获取用户列表失败");
@@ -218,7 +235,7 @@ export default {
 		//用户状态改变
 		async userStateChanged(userInfo) {
 			const { data: result } = await this.$http.put(
-				`users/${userInfo.id}/state/${userInfo.mg_state}`
+				`users/${userInfo.id}/state/${userInfo.mg_state}`,
 			);
 			//修改失败
 			if (result.meta.status !== 200) {
@@ -226,9 +243,35 @@ export default {
 				return this.$message.error("修改用户状态失败");
 			}
 			this.$message.success("修改用户状态成功");
-		}
-		// 表单验证
-	}
+		},
+		//添加用户关闭
+		addDialogClosed() {
+			this.$refs.addFormRef.resetFields();
+		},
+		//添加用户
+		addUser() {
+			this.$refs.addFormRef.validate(async (valid) => {
+				//验证失败
+				if (!valid) {
+					return;
+				}
+				const { data: result } = await this.$http.post("users", this.addForm);
+				//添加失败
+				if (result.meta.status !== 201) {
+					return this.$message.error("添加用户失败");
+				}
+				this.$message.success("添加用户成功");
+				//关闭对话框
+				this.addDialogVisible = false;
+				//重新获取用户列表
+				await this.getUserList();
+			});
+		},
+		//展示编辑用户对话框
+		showEditDialog() {
+			this.editDialogVisible = true;
+		},
+	},
 };
 </script>
 
