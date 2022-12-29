@@ -51,12 +51,12 @@
 					</template>
 				</el-table-column>
 				<el-table-column label="操作">
-					<template v-slot="{}">
+					<template v-slot="scope">
 						<el-button
 							type="primary"
 							icon="el-icon-edit"
 							size="mini"
-							@click="showEditDialog()"
+							@click="showEditDialog(scope.row.id)"
 						></el-button>
 						<el-button
 							type="danger"
@@ -125,13 +125,32 @@
 			</span>
 		</el-dialog>
 		<!-- //修改用户对话框 -->
-		<el-dialog title="修改用户" :visible.sync="editDialogVisible" width="50%">
-			<span>这是一段信息</span>
+		<el-dialog
+			title="修改用户"
+			:visible.sync="editDialogVisible"
+			width="50%"
+			@close="editDialogClosed"
+		>
+			<el-form
+				:model="editForm"
+				:rules="editFormRules"
+				ref="editFormRef"
+				label-width="70px"
+			>
+				<el-form-item label="用户名">
+					<el-input v-model="editForm.username" disabled></el-input>
+				</el-form-item>
+				<el-form-item label="邮箱" prop="email">
+					<el-input v-model="editForm.email"></el-input>
+				</el-form-item>
+				<el-form-item label="手机" prop="mobile">
+					<el-input v-model="editForm.mobile"></el-input>
+				</el-form-item>
+			</el-form>
+
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="editDialogVisible = false">取 消</el-button>
-				<el-button type="primary" @click="editDialogVisible = false"
-					>确 定</el-button
-				>
+				<el-button type="primary" @click="editUserInfo">确 定</el-button>
 			</span>
 		</el-dialog>
 	</div>
@@ -163,32 +182,32 @@ export default {
 		return {
 			//获取用户列表的参数
 			queryInfo: {
-				query: "",
-				pagenum: 1,
-				pagesize: 2,
+				query   : "",
+				pagenum : 1,
+				pagesize: 2
 			},
 			//用户列表数据
-			userList: [],
+			userList        : [],
 			//总数据
-			total: 0,
+			total           : 0,
 			//添加用户框的显示与隐藏
 			addDialogVisible: false,
 			//用户的表单数据
-			addForm: {
+			addForm         : {
 				username: "",
 				password: "",
-				email: "",
-				mobile: "",
+				email   : "",
+				mobile  : ""
 			},
 			//表单验证对象
 			addFormRules: {
 				username: [
 					{ required: true, message: "请输入用户名", trigger: "blur" },
-					{ min: 3, max: 10, message: "长度在3到10个字符", trigger: "blur" },
+					{ min: 3, max: 10, message: "长度在3到10个字符", trigger: "blur" }
 				],
 				password: [
 					{ required: true, message: "请输入密码", trigger: "blur" },
-					{ min: 6, max: 12, message: "长度在6到12个字符", trigger: "blur" },
+					{ min: 6, max: 12, message: "长度在6到12个字符", trigger: "blur" }
 				],
 				email: [
 					{ required: true, message: "请输入邮箱", trigger: "blur" },
@@ -199,12 +218,28 @@ export default {
 					{
 						pattern: /^1[3456789]\d{9}$/,
 						message: "请输入正确的手机号",
-						trigger: "blur",
-					},
-				],
+						trigger: "blur"
+					}
+				]
 			},
 			//修改用户框的显示与隐藏
 			editDialogVisible: false,
+			//查询到的用户数据
+			editForm         : {},
+			//修改用户表单验证对象
+			editFormRules    : {
+				email: [
+					{ required: true, message: "请输入邮箱", trigger: "blur" },
+					{ validator: checkEmail, trigger: "blur" }
+				],
+				mobile: [
+					{ required: true, message: "请输入手机号", trigger: "blur" },
+					{
+						validator: checkMobile,
+						trigger  : "blur"
+					}
+				]
+			}
 		};
 	},
 	created() {
@@ -212,9 +247,7 @@ export default {
 	},
 	methods: {
 		async getUserList() {
-			const { data: res } = await this.$http.get("users", {
-				params: this.queryInfo,
-			});
+			const { data: res } = await this.$http.get("users", {params: this.queryInfo});
 			//数据获取失败
 			if (res.meta.status !== 200) {
 				return this.$message.error("获取用户列表失败");
@@ -235,7 +268,7 @@ export default {
 		//用户状态改变
 		async userStateChanged(userInfo) {
 			const { data: result } = await this.$http.put(
-				`users/${userInfo.id}/state/${userInfo.mg_state}`,
+				`users/${userInfo.id}/state/${userInfo.mg_state}`
 			);
 			//修改失败
 			if (result.meta.status !== 200) {
@@ -250,7 +283,7 @@ export default {
 		},
 		//添加用户
 		addUser() {
-			this.$refs.addFormRef.validate(async (valid) => {
+			this.$refs.addFormRef.validate(async(valid) => {
 				//验证失败
 				if (!valid) {
 					return;
@@ -268,10 +301,42 @@ export default {
 			});
 		},
 		//展示编辑用户对话框
-		showEditDialog() {
+		async showEditDialog(id) {
+			const { data: result } = await this.$http.get(`users/${id}`);
+			//获取失败
+			if (result.meta.status !== 200) {
+				return this.$message.error("获取用户信息失败");
+			}
+			this.editForm = result.data;
 			this.editDialogVisible = true;
 		},
-	},
+		//编辑用户关闭
+		editDialogClosed() {
+			this.$refs.editFormRef.resetFields();
+		},
+		//修改用户信息并提交
+		editUserInfo() {
+			this.$refs.editFormRef.validate(async(valid) => {
+				//验证失败
+				if (!valid) {
+					return;
+				}
+				const { data: result } = await this.$http.put(
+					`users/${this.editForm.id}`,
+					this.editForm
+				);
+				//修改失败
+				if (result.meta.status !== 200) {
+					return this.$message.error("修改用户信息失败");
+				}
+				this.$message.success("修改用户信息成功");
+				//关闭对话框
+				this.editDialogVisible = false;
+				//重新获取用户列表
+				await this.getUserList();
+			});
+		}
+	}
 };
 </script>
 
