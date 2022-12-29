@@ -53,23 +53,51 @@
 				<el-table-column prop="roleName" label="角色名称"></el-table-column>
 				<el-table-column prop="roleDesc" label="角色描述"></el-table-column>
 				<el-table-column label="操作" width="180">
-					<template v-slot="{}">
+					<template v-slot="scope">
 						<el-button type="text" size="small">分配权限</el-button>
-						<el-button type="text" size="small">编辑</el-button>
-						<el-button type="text" size="small">删除</el-button>
+						<el-button
+							type="text"
+							size="small"
+							@click="showEditDialog(scope.row.id+'')"
+							>编辑</el-button
+						>
+						<el-button
+							type="text"
+							size="small"
+							@click="removeUserById(scope.row.id)"
+							>删除</el-button
+						>
 					</template>
 				</el-table-column>
 			</el-table>
 		</el-card>
+		<!-- //修改角色对话框 -->
+		<el-dialog title="修改角色" :visible.sync="editDialogVisible" width="50%">
+			<el-form ref="editForm" :model="roleList" label-width="80px">
+				<el-form-item label="角色名称">
+					<el-input v-model="roleList.roleName"></el-input>
+				</el-form-item>
+				<el-form-item label="角色描述">
+					<el-input v-model="roleList.roleDesc"></el-input>
+				</el-form-item>
+			</el-form>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="editDialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="editRole">确 定</el-button>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
 <script>
+
 export default {
 	data() {
 		return {
 			//角色列表数据
-			roleList: []
+			roleList         : [],
+			//修改角色框的显示与隐藏
+			editDialogVisible: false
 		};
 	},
 	created() {
@@ -87,8 +115,66 @@ export default {
 			}
 			//获取成功
 			this.roleList = res.data;
+		},
+		
+		//删除角色
+		async removeUserById(id) {
+			//提示用户是否删除
+			const confirmResult = await this.$confirm("此操作将永久删除该角色, 是否继续?", "提示", {
+				confirmButtonText: "确定",
+				cancelButtonText : "取消",
+				type             : "warning"
+			});
+			//判断用户是否点击了取消按钮
+			if (confirmResult === "cancel") {
+				return this.$message.info("已取消删除");
+			}
+			//发送请求
+			const { data: res } = await this.$http.delete(`roles/${id}`);
+			//判断是否删除成功
+			if (res.meta.status !== 200) {
+				return this.$message.error("删除角色失败");
+			}
+			//删除成功
+			this.$message.success("删除角色成功");
+			//重新获取角色列表数据
+			await this.getRoleList();
+		},
+		//展示修改角色对话框
+		async showEditDialog(id) {
+			//发送请求
+			const { data: res } = await this.$http.get(`roles/${id}`);
+			//判断是否获取成功
+			if (res.meta.status !== 200) {
+				return this.$message.error("获取角色信息失败");
+			}
+			//获取成功
+			this.roleList = res.data;
+			//显示修改角色对话框
+			this.editDialogVisible = true;
+		},
+		//修改角色信息并提交
+		async editRole() {
+			//获取表单数据
+			const { roleName, roleDesc } = this.roleList;
+			//发送请求
+			const { data: res } = await this.$http.put(`roles/${this.roleList.id}`, {
+				roleName,
+				roleDesc
+			});
+			//判断是否修改成功
+			if (res.meta.status !== 200) {
+				return this.$message.error(res.meta.msg);
+			}
+			//修改成功
+			this.$message.success("修改角色信息成功");
+			//关闭对话框
+			this.editDialogVisible = false;
+			//重新获取角色列表数据
+			await this.getRoleList();
 		}
 	}
+	
 };
 </script>
 
