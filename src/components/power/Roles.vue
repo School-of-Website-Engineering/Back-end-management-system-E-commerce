@@ -69,7 +69,7 @@ export default {
 	data() {
 		return {
 			//角色列表数据
-			roleList: [],
+			roleList: []
 		};
 	},
 	created() {
@@ -87,8 +87,8 @@ export default {
 			}
 			//获取成功
 			this.roleList = res.data;
-		},
-	},
+		}
+	}
 };
 </script>
 
