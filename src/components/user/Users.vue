@@ -74,6 +74,7 @@
 								type="warning"
 								icon="el-icon-setting"
 								size="mini"
+								@click="setRole(scope.row)"
 							></el-button>
 						</el-tooltip>
 					</template>
@@ -152,6 +153,37 @@
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="editDialogVisible = false">取 消</el-button>
 				<el-button type="primary" @click="editUserInfo">确 定</el-button>
+			</span>
+		</el-dialog>
+		<!-- 分配角色对话框 -->
+		<el-dialog
+			title="分配角色"
+			:visible.sync="setRoleDialogVisible"
+			width="50%"
+		>
+			<div>
+				<p>当前的用户:{{ userInfo.username }}</p>
+				<br>
+				<p>当前的角色:{{ userInfo.role_name }}</p>
+				<br>
+				<p>
+					分配新角色:
+					<el-select v-model="selectedRoleId" placeholder="请选择">
+						<el-option
+							v-for="item in rolesList"
+							:key="item.id"
+							:label="item.roleName"
+							:value="item.id"
+						>
+						</el-option>
+					</el-select>
+				</p>
+			</div>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="dialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="dialogVisible = false"
+					>确 定</el-button
+				>
 			</span>
 		</el-dialog>
 	</div>
@@ -240,7 +272,15 @@ export default {
 						trigger  : "blur"
 					}
 				]
-			}
+			},
+			//分配角色框的显示与隐藏
+			setRoleDialogVisible: false,
+			//需要被分配的用户信息
+			userInfo            : {},
+			//所有角色列表
+			rolesList           : [],
+			//已选中的id
+			selectedRoleId      : ""
 		};
 	},
 	created() {
@@ -360,6 +400,17 @@ export default {
 			this.$message.success("删除用户成功");
 			//重新获取用户列表
 			await this.getUserList();
+		},
+		// 根据id删除用户信息
+		async setRole(userInfo) {
+			this.userInfo = userInfo;
+			//在展示对话框之前，获取所有角色的列表
+			const { data: result } = await this.$http.get("roles");
+			if (result.meta.status !== 200) {
+				return this.$message.error("获取角色列表失败");
+			}
+			this.rolesList = result.data;
+			this.setRoleDialogVisible = true;
 		}
 	}
 };
