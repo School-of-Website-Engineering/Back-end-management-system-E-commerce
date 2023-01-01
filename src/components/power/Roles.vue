@@ -117,6 +117,7 @@
 			title="分配权限"
 			:visible.sync="setRightsDialogVisible"
 			width="50%"
+			@close="setRightsDialogClose"
 		>
 			<!-- 树形 -->
 			<el-tree
@@ -290,6 +291,11 @@ export default {
 			node.children.forEach((item) => {
 				this.getDefKeys(item, arr);
 			});
+		},
+		// 分配权限关闭
+		setRightsDialogClose(){
+			//清空默认选中的权限
+			this.defKeys = [];
 		}
 	}
 };
