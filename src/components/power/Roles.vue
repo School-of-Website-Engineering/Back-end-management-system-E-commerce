@@ -26,8 +26,12 @@
 							>
 								<!-- 一级权限 -->
 								<el-col :span="5">
-									<el-tag closable
-									        @close="removeRightById(scope.row, item1.id)"> {{ item1.authName }}</el-tag>
+									<el-tag
+										closable
+										@close="removeRightById(scope.row, item1.id)"
+									>
+										{{ item1.authName }}</el-tag
+									>
 									<i class="el-icon-arrow-right"></i>
 								</el-col>
 
@@ -42,7 +46,10 @@
 											<el-tag
 												closable
 												@close="removeRightById(scope.row, item2.id)"
-												type="success"> {{ item2.authName }}</el-tag>
+												type="success"
+											>
+												{{ item2.authName }}</el-tag
+											>
 											<i class="el-icon-arrow-right"></i>
 										</el-col>
 										<el-col :span="18">
@@ -68,16 +75,21 @@
 				<el-table-column prop="roleDesc" label="角色描述"></el-table-column>
 				<el-table-column label="操作" width="180">
 					<template v-slot="scope">
-						<el-button type="text" size="small">分配权限</el-button>
 						<el-button
 							type="text"
-							size="small"
+							size="mini"
+							@click="showSetRightsDialog(scope.row)"
+							>分配权限</el-button
+						>
+						<el-button
+							type="text"
+							size="mini"
 							@click="showEditDialog(scope.row.id + '')"
 							>编辑</el-button
 						>
 						<el-button
 							type="text"
-							size="small"
+							size="mini"
 							@click="removeUserById(scope.row.id)"
 							>删除</el-button
 						>
@@ -100,6 +112,29 @@
 				<el-button type="primary" @click="editRole">确 定</el-button>
 			</span>
 		</el-dialog>
+		<!-- //分配权限对话框 -->
+		<el-dialog
+			title="分配权限"
+			:visible.sync="setRightsDialogVisible"
+			width="50%"
+		>
+			<!-- 树形 -->
+			<el-tree
+				:data="rightsList"
+				:props="treeProps"
+				show-checkbox
+				node-key="id"
+				default-expand-all
+				:default-checked-keys="defKeys"
+			></el-tree>
+
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="setRightsDialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="setRightsDialogVisible = false"
+					>确 定</el-button
+				>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -107,10 +142,21 @@
 export default {
 	data() {
 		return {
+			//控制对话框的显示与隐藏
+			setRightsDialogVisible: false,
 			//角色列表数据
-			roleList         : [],
+			roleList              : [],
 			//修改角色框的显示与隐藏
-			editDialogVisible: false
+			editDialogVisible     : false,
+			//所有权限列表
+			rightsList            : [],
+			//树形控件的配置
+			treeProps             : {
+				label   : "authName",
+				children: "children"
+			},
+			//默认选中的权限
+			defKeys: []
 		};
 	},
 	created() {
@@ -218,6 +264,32 @@ export default {
 			this.$message.success("删除权限成功");
 			//重新获取角色列表数据
 			role.children = res.data;
+		},
+		//展示分配权限对话框
+		async showSetRightsDialog(role) {
+			//发送请求
+			const { data: res } = await this.$http.get("rights/tree");
+			//判断是否获取成功
+			if (res.meta.status !== 200) {
+				return this.$message.error("获取权限列表失败");
+			}
+			//获取成功
+			this.rightsList = res.data;
+
+			//获取当前角色已经拥有的权限
+			this.getDefKeys(role, this.defKeys);
+
+			//展示分配权限对话框
+			this.setRightsDialogVisible = true;
+		},
+		//通过递归的形式，获取角色下所有三级权限的id，并保存到 defKeys数组中
+		getDefKeys(node, arr) {
+			if (!node.children) {
+				return arr.push(node.id);
+			}
+			node.children.forEach((item) => {
+				this.getDefKeys(item, arr);
+			});
 		}
 	}
 };
