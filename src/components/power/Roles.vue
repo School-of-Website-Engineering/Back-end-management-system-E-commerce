@@ -22,7 +22,7 @@
 							<el-row
 								v-for="(item1, i1) in scope.row.children"
 								:key="item1.id"
-								:class="['bdbottom', i1 === 0 ? 'bdtop' : '']"
+								:class="['bdbottom', i1 === 0 ? 'bdtop' : '','vcenter']"
 							>
 								<!-- 一级权限 -->
 								<el-col :span="5">
@@ -35,13 +35,18 @@
 									<el-row
 										v-for="(item2, i2) in item1.children"
 										:key="item2.id"
-										:class="[i2 === 0 ? '' : 'bdtop']"
+										:class="[i2 === 0 ? '' : 'bdtop','vcenter']"
 									>
-										<el-col>
+										<el-col :span="6">
 											<el-tag type="success"> {{ item2.authName }}</el-tag>
 											<i class="el-icon-arrow-right"></i>
 										</el-col>
-										<el-col></el-col>
+										<el-col :span="18">
+											<el-tag type="warning"
+												v-for="(item3) in item2.children" :key="item3.id" >
+												{{ item3.authName }}
+											</el-tag>
+										</el-col>
 									</el-row>
 								</el-col>
 							</el-row>
@@ -58,7 +63,7 @@
 						<el-button
 							type="text"
 							size="small"
-							@click="showEditDialog(scope.row.id+'')"
+							@click="showEditDialog(scope.row.id + '')"
 							>编辑</el-button
 						>
 						<el-button
@@ -90,7 +95,6 @@
 </template>
 
 <script>
-
 export default {
 	data() {
 		return {
@@ -116,15 +120,19 @@ export default {
 			//获取成功
 			this.roleList = res.data;
 		},
-		
+
 		//删除角色
 		async removeUserById(id) {
 			//提示用户是否删除
-			const confirmResult = await this.$confirm("此操作将永久删除该角色, 是否继续?", "提示", {
-				confirmButtonText: "确定",
-				cancelButtonText : "取消",
-				type             : "warning"
-			});
+			const confirmResult = await this.$confirm(
+				"此操作将永久删除该角色, 是否继续?",
+				"提示",
+				{
+					confirmButtonText: "确定",
+					cancelButtonText : "取消",
+					type             : "warning"
+				}
+			);
 			//判断用户是否点击了取消按钮
 			if (confirmResult === "cancel") {
 				return this.$message.info("已取消删除");
@@ -174,7 +182,6 @@ export default {
 			await this.getRoleList();
 		}
 	}
-	
 };
 </script>
 
@@ -187,5 +194,9 @@ export default {
 }
 .bdbottom {
 	border-bottom: 1px solid #eee;
+}
+.vcenter {
+	display: flex;
+	align-items: center;
 }
 </style>
