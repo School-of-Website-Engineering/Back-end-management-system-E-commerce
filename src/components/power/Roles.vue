@@ -22,11 +22,12 @@
 							<el-row
 								v-for="(item1, i1) in scope.row.children"
 								:key="item1.id"
-								:class="['bdbottom', i1 === 0 ? 'bdtop' : '','vcenter']"
+								:class="['bdbottom', i1 === 0 ? 'bdtop' : '', 'vcenter']"
 							>
 								<!-- 一级权限 -->
 								<el-col :span="5">
-									<el-tag> {{ item1.authName }}</el-tag>
+									<el-tag closable
+									        @close="removeRightById(scope.row, item1.id)"> {{ item1.authName }}</el-tag>
 									<i class="el-icon-arrow-right"></i>
 								</el-col>
 
@@ -35,15 +36,23 @@
 									<el-row
 										v-for="(item2, i2) in item1.children"
 										:key="item2.id"
-										:class="[i2 === 0 ? '' : 'bdtop','vcenter']"
+										:class="[i2 === 0 ? '' : 'bdtop', 'vcenter']"
 									>
 										<el-col :span="6">
-											<el-tag type="success"> {{ item2.authName }}</el-tag>
+											<el-tag
+												closable
+												@close="removeRightById(scope.row, item2.id)"
+												type="success"> {{ item2.authName }}</el-tag>
 											<i class="el-icon-arrow-right"></i>
 										</el-col>
 										<el-col :span="18">
-											<el-tag type="warning"
-												v-for="(item3) in item2.children" :key="item3.id" >
+											<el-tag
+												type="warning"
+												v-for="item3 in item2.children"
+												:key="item3.id"
+												closable
+												@close="removeRightById(scope.row, item3.id)"
+											>
 												{{ item3.authName }}
 											</el-tag>
 										</el-col>
@@ -180,6 +189,35 @@ export default {
 			this.editDialogVisible = false;
 			//重新获取角色列表数据
 			await this.getRoleList();
+		},
+		//根据id删除对应的权限
+		async removeRightById(role, rightId) {
+			//弹窗提示用户是否删除
+			const confirmResult = await this.$confirm(
+				"此操作将永久删除该文件, 是否继续?",
+				"提示",
+				{
+					confirmButtonText: "确定",
+					cancelButtonText : "取消",
+					type             : "warning"
+				}
+			).catch((err) => err);
+			//判断用户是否点击了取消按钮
+			if (confirmResult !== "confirm") {
+				return this.$message.info("已取消删除");
+			}
+			//发送请求
+			const { data: res } = await this.$http.delete(
+				`roles/${role.id}/rights/${rightId}`
+			);
+			//判断是否删除成功
+			if (res.meta.status !== 200) {
+				return this.$message.error("删除权限失败");
+			}
+			//删除成功
+			this.$message.success("删除权限成功");
+			//重新获取角色列表数据
+			role.children = res.data;
 		}
 	}
 };
