@@ -13,10 +13,15 @@ import axios from "axios";
 axios.defaults.baseURL = "https://lianghj.top:8888/api/private/v1/";
 Vue.prototype.$http = axios;
 //请求拦截器
-axios.interceptors.request.use(config => {
+axios.interceptors.request.use((config) => {
 	config.headers.Authorization = window.sessionStorage.getItem("token");
 	return config;
-})
+});
+
+//导入表格树插件
+import ZkTable from "vue-table-with-tree-grid";
+
+Vue.use(ZkTable);
 
 //导入图标字体
 import "./assets/fonts/iconfont.css";
