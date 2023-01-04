@@ -16,6 +16,7 @@
 					</el-button>
 				</el-col>
 			</el-row>
+			<br>
 			<!-- 表格 -->
 			<zk-table
 				:data="cateList"
@@ -25,6 +26,7 @@
 				:show-index="true"
 				:index-text="this.indexText"
 				border
+				:show-row-hover="false"
 			>
 				<!-- 是否有效 -->
 				<template v-slot:isOk="scope">
@@ -67,6 +69,17 @@
 				</template>
 			</zk-table>
 			<!-- 分页区 -->
+			<br>
+			<el-pagination
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				:current-page="queryInfo.pagenum"
+				:page-sizes="[2, 3, 5, 10]"
+				:page-size="queryInfo.pagesize"
+				layout="total, sizes, prev, pager, next, jumper"
+				:total="total"
+			>
+			</el-pagination>
 		</el-card>
 	</div>
 </template>
@@ -129,6 +142,16 @@ export default {
 			this.cateList = res.data.result;
 			//获取总条数
 			this.total = res.data.total;
+		},
+		//页码改变
+		handleSizeChange(newSize) {
+			this.queryInfo.pagesize = newSize;
+			this.getCateList();
+		},
+		//每页条数改变
+		handleCurrentChange(newPage) {
+			this.queryInfo.pagenum = newPage;
+			this.getCateList();
 		}
 	}
 };
