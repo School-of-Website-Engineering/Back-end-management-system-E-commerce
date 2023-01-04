@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkBack_end_management_system_E_commerce"]=self["webpackChunkBack_end_management_system_E_commerce"]||[]).push([[240],{3240:function(e,n,t){t.r(n),t.d(n,{default:function(){return m}});var c=function(){var e=this,n=e._self._c;return n("div")},a=[],r={data(){return{}},created(){},methods:{}},s=r,u=t(1001),_=(0,u.Z)(s,c,a,!1,null,"6ecb4302",null),m=_.exports}}]);
+//# sourceMappingURL=240.0578cae2.js.map
