@@ -40,6 +40,12 @@ export default [
 				path     : "/roles",
 				component: () => import("@/components/power/Roles"),
 				name     : "roles"
+			},
+			//导入商品分类组件
+			{
+				path     : "/categories",
+				component: () => import("@/components/goods/Cate"),
+				name     : "categories"
 			}
 		]
 	}
