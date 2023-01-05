@@ -169,7 +169,9 @@ export default {
 					type    : "template",
 					template: "action"
 				}
-			]
+			],
+			//父级分类数据
+			parentCateList: []
 		};
 	},
 	created() {
@@ -201,6 +203,8 @@ export default {
 		},
 		//点击按钮显示添加分类对话框
 		showAddCateDialog() {
+			//获取分类数据
+			this.getParentCateList();
 			this.addCateDialogVisible = true;
 		},
 		// 获取父级分类数据
