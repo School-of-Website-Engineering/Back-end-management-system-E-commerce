@@ -11,12 +11,12 @@
 		<el-card>
 			<el-row>
 				<el-col>
-					<el-button type="primary">
+					<el-button type="primary" @click="showAddCateDialog">
 						添加分类
 					</el-button>
 				</el-col>
 			</el-row>
-			<br>
+			<br />
 			<!-- 表格 -->
 			<zk-table
 				:data="cateList"
@@ -69,7 +69,7 @@
 				</template>
 			</zk-table>
 			<!-- 分页区 -->
-			<br>
+			<br />
 			<el-pagination
 				@size-change="handleSizeChange"
 				@current-change="handleCurrentChange"
@@ -81,6 +81,32 @@
 			>
 			</el-pagination>
 		</el-card>
+		<!-- 添加分类对话框 -->
+		<el-dialog
+			title="添加分类"
+			:visible.sync="addCateDialogVisible"
+			width="50%"
+		>
+			<el-form
+				:model="addCateForm"
+				:rules="addCateFormRules"
+				ref="addCateForRef"
+				label-width="100px"
+			>
+				<el-form-item label="分类名称:" prop="cat_name">
+					<el-input v-model="addCateForm.cat_name"></el-input>
+				</el-form-item>
+				<el-form-item label="父级分类:">
+					<el-input v-model="addCateForm.cat_name"></el-input>
+				</el-form-item>
+			</el-form>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="addCateDialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="addCateDialogVisible = false"
+					>确 定</el-button
+				>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -88,9 +114,29 @@
 export default {
 	data() {
 		return {
-			indexText: "#",
+			//添加分类表单数据
+			addCateForm: {
+				// 名称
+				cat_name   : "",
+				// 父级id
+				cat_pid    : 0,
+				// 级别
+				cat_level  : 0,
+				// 是否有效
+				cat_deleted: false
+			},
+			//添加分类表单验证规则
+			addCateFormRules: {
+				cat_name: [
+					{ required: true, message: "请输入分类名称", trigger: "blur" },
+					{ min: 2, max: 5, message: "长度在 2 到 5 个字符", trigger: "blur" }
+				]
+			},
+			//控制添加分类对话框的显示与隐藏
+			addCateDialogVisible: false,
+			indexText           : "#",
 			//查询条件
-			queryInfo: {
+			queryInfo           : {
 				type    : 3,
 				pagenum : 1,
 				pagesize: 5
@@ -152,6 +198,20 @@ export default {
 		handleCurrentChange(newPage) {
 			this.queryInfo.pagenum = newPage;
 			this.getCateList();
+		},
+		//点击按钮显示添加分类对话框
+		showAddCateDialog() {
+			this.addCateDialogVisible = true;
+		},
+		// 获取父级分类数据
+		async getParentCateList() {
+			const { data: res } = await this.$http.get("categories", {params: { type: 2 }});
+			//获取失败
+			if (res.meta.status !== 200) {
+				return this.$message.error("获取父级分类数据失败");
+			}
+			//获取成功
+			this.parentCateList = res.data;
 		}
 	}
 };
