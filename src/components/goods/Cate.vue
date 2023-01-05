@@ -86,6 +86,7 @@
 			title="添加分类"
 			:visible.sync="addCateDialogVisible"
 			width="50%"
+			@close="addCateDialogClosed"
 		>
 			<el-form
 				:model="addCateForm"
@@ -97,14 +98,19 @@
 					<el-input v-model="addCateForm.cat_name"></el-input>
 				</el-form-item>
 				<el-form-item label="父级分类:">
-					<el-input v-model="addCateForm.cat_name"></el-input>
+					<el-cascader
+						v-model="selectedKeys"
+						:options="parentCateList"
+						:props="{ expandTrigger: 'hover', ...cascaderProps }"
+						@change="parentCateChanged"
+						clearable
+						change-on-select
+					></el-cascader>
 				</el-form-item>
 			</el-form>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="addCateDialogVisible = false">取 消</el-button>
-				<el-button type="primary" @click="addCateDialogVisible = false"
-					>确 定</el-button
-				>
+				<el-button type="primary" @click="addCate">确 定</el-button>
 			</span>
 		</el-dialog>
 	</div>
@@ -127,9 +133,7 @@ export default {
 			},
 			//添加分类表单验证规则
 			addCateFormRules: {
-				cat_name: [
-					{ required: true, message: "请输入分类名称", trigger: "blur" },
-					{ min: 2, max: 5, message: "长度在 2 到 5 个字符", trigger: "blur" }
+				cat_name: [{ required: true, message: "请输入分类名称", trigger: "blur" }
 				]
 			},
 			//控制添加分类对话框的显示与隐藏
@@ -171,7 +175,15 @@ export default {
 				}
 			],
 			//父级分类数据
-			parentCateList: []
+			parentCateList: [],
+			//指定级联选择器的对象
+			cascaderProps : {
+				value   : "cat_id",
+				label   : "cat_name",
+				children: "children"
+			},
+			//选中的父级分类的id
+			selectedKeys: []
 		};
 	},
 	created() {
@@ -185,7 +197,6 @@ export default {
 			if (res.meta.status !== 200) {
 				return this.$message.error("获取商品分类数据失败");
 			}
-			console.log(res);
 			//获取成功
 			this.cateList = res.data.result;
 			//获取总条数
@@ -216,9 +227,54 @@ export default {
 			}
 			//获取成功
 			this.parentCateList = res.data;
-		}
+		},
+		//选择项发生变化时触发
+		parentCateChanged() {
+			// console.log(this.selectedKeys);
+			//如果selectedKeys 数绿中的 length大于0，证明选中的父级分类//反之，就说明没有选中任何父级分类
+			if (this.selectedKeys.length > 0) {
+				//父级分类的id
+				this.addCateForm.cat_pid = this.selectedKeys[
+					this.selectedKeys.length - 1
+				];
+				//为当前分类的等级赋值
+				this.addCateForm.cat_level = this.selectedKeys.length;
+				return;
+			}
+			else {
+				//没有选中任何父级分类
+				this.addCateForm.cat_pid = 0;
+				this.addCateForm.cat_level = 0;
+			}
+		},
+		//添加分类
+		async addCate() {
+			//发送请求
+			const { data: res } = await this.$http.post(
+				"categories",
+				this.addCateForm
+			);
+			//添加失败
+			if (res.meta.status !== 201) {
+				return this.$message.error("添加分类失败");
+			}
+			//添加成功
+			this.$message.success("添加分类成功");
+			//关闭对话框
+			this.addCateDialogVisible = false;
+			//重新获取商品分类数据
+			await this.getCateList();
+		},
+		addCateDialogClosed() {
+			//重置表单
+			this.$refs.addCateForRef.resetFields();
+		},
 	}
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.el-cascader {
+	width: 100%;
+}
+</style>
