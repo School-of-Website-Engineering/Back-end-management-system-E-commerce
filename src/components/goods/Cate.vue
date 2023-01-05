@@ -91,7 +91,7 @@
 			<el-form
 				:model="addCateForm"
 				:rules="addCateFormRules"
-				ref="addCateForRef"
+				ref="addCateFormRef"
 				label-width="100px"
 			>
 				<el-form-item label="分类名称:" prop="cat_name">
@@ -132,10 +132,7 @@ export default {
 				cat_deleted: false
 			},
 			//添加分类表单验证规则
-			addCateFormRules: {
-				cat_name: [{ required: true, message: "请输入分类名称", trigger: "blur" }
-				]
-			},
+			addCateFormRules    : {cat_name: [{ required: true, message: "请输入分类名称", trigger: "blur" }]},
 			//控制添加分类对话框的显示与隐藏
 			addCateDialogVisible: false,
 			indexText           : "#",
@@ -249,26 +246,31 @@ export default {
 		},
 		//添加分类
 		async addCate() {
-			//发送请求
-			const { data: res } = await this.$http.post(
-				"categories",
-				this.addCateForm
-			);
-			//添加失败
-			if (res.meta.status !== 201) {
-				return this.$message.error("添加分类失败");
-			}
-			//添加成功
-			this.$message.success("添加分类成功");
-			//关闭对话框
-			this.addCateDialogVisible = false;
-			//重新获取商品分类数据
-			await this.getCateList();
+			this.$refs.addCateFormRef.validate(async(valid) => {
+				if (!valid) {
+					return;
+				}
+				const { data: res } = await this.$http.post(
+					"categories",
+					this.addCateForm
+				);
+				//添加失败
+				if (res.meta.status !== 201) {
+					return this.$message.error("添加分类失败");
+				}
+				//添加成功
+				this.$message.success("添加分类成功");
+				//关闭对话框
+				this.addCateDialogVisible = false;
+				//重新获取商品分类数据
+				await this.getCateList();
+			});
 		},
 		addCateDialogClosed() {
 			//重置表单
-			this.$refs.addCateForRef.resetFields();
-		},
+			this.$refs.addCateFormRef.resetFields();
+			this.selectedKeys = [];
+		}
 	}
 };
 </script>
