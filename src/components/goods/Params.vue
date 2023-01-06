@@ -31,17 +31,95 @@
 			<!-- tab页签 -->
 			<el-tabs v-model="activeName" @tab-click="handleClick">
 				<el-tab-pane label="动态参数" name="many">
-					<el-button type="primary" size="mini" :disabled="isBtnDisabled"
+					<el-button
+						type="primary"
+						size="mini"
+						:disabled="isBtnDisabled"
+						@click="addDialogVisible = true"
 						>添加参数</el-button
 					>
+					<br />
+					<br />
+					<!-- 动态参数表格 -->
+					<el-table :data="manyTableData" border stripe>
+						<!-- 展开行 -->
+						<el-table-column type="expand"></el-table-column>
+						<!-- 索引列 -->
+						<el-table-column type="index" label="#"></el-table-column>
+						<el-table-column
+							label="参数名称"
+							prop="attr_name"
+						></el-table-column>
+						<el-table-column label="操作">
+							<template v-slot="{}">
+								<el-button type="primary" size="mini" icon="el-icon-edit"
+									>编辑</el-button
+								>
+								<el-button type="danger" size="mini" icon="el-icon-delete"
+									>删除</el-button
+								>
+							</template>
+						</el-table-column>
+					</el-table>
 				</el-tab-pane>
 				<el-tab-pane label="静态属性" name="only">
-					<el-button type="primary" size="mini" :disabled="isBtnDisabled"
+					<el-button
+						type="primary"
+						size="mini"
+						:disabled="isBtnDisabled"
+						@click="addDialogVisible = true"
 						>添加属性</el-button
 					>
+					<br />
+					<br />
+					<!-- 静态表格 -->
+					<el-table :data="onlyTableData" border stripe>
+						<!-- 展开行 -->
+						<el-table-column type="expand"></el-table-column>
+						<!-- 索引列 -->
+						<el-table-column type="index" label="#"></el-table-column>
+						<el-table-column
+							label="属性名称"
+							prop="attr_name"
+						></el-table-column>
+						<el-table-column label="操作">
+							<template v-slot="{}">
+								<el-button type="primary" size="mini" icon="el-icon-edit"
+									>编辑</el-button
+								>
+								<el-button type="danger" size="mini" icon="el-icon-delete"
+									>删除</el-button
+								>
+							</template>
+						</el-table-column>
+					</el-table>
 				</el-tab-pane>
 			</el-tabs>
 		</el-card>
+		<!-- 添加参数对话框 -->
+		<el-dialog
+			:title="`添加${title}`"
+			:visible.sync="addDialogVisible"
+			width="50%"
+			@close="addDialogClosed"
+		>
+			<el-form
+				:model="addForm"
+				:rules="addFormRules"
+				ref="addFormRef"
+				label-width="100px"
+			>
+				<el-form-item :label="title" prop="attr_name">
+					<el-input v-model="addForm.attr_name"></el-input>
+				</el-form-item>
+			</el-form>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="addDialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="addDialogVisible = false"
+					>确 定</el-button
+				>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -61,9 +139,15 @@ export default {
 			// 被激活的tab页签的名称
 			activeName      : "many",
 			//动态数据table
-			manyTableData : [],
+			manyTableData   : [],
 			//静态数据table
-			onlyTableData : [],
+			onlyTableData   : [],
+			// 添加参数对话框的显示与隐藏
+			addDialogVisible: false,
+			//添加参数的表单数据对象
+			addForm         : { attr_name: "" },
+			//添加参数的表单校验规则对象
+			addFormRules    : {attr_name: [{ required: true, message: "请输入参数名称", trigger: "blur" }]}
 		};
 	},
 	created() {
@@ -91,7 +175,7 @@ export default {
 		async getParamsData() {
 			const { data: res } = await this.$http.get(
 				`categories/${this.cateId}/attributes`,
-				{params: {sel: this.activeName}}
+				{params: { sel: this.activeName }}
 			);
 			//获取失败
 			if (res.meta.status !== 200) {
@@ -100,9 +184,15 @@ export default {
 			//获取成功,判断是动态参数还是静态属性
 			if (this.activeName === "many") {
 				this.manyTableData = res.data;
-			} else {
+			}
+			else {
 				this.onlyTableData = res.data;
 			}
+		},
+		//监听添加参数对话框关闭事件
+		addDialogClosed() {
+			//重置表单
+			this.$refs.addFormRef.resetFields();
 		}
 	},
 	computed: {
@@ -113,6 +203,10 @@ export default {
 		//当前选中的三级分类的id
 		cateId() {
 			return this.SelectedCateKeys[2];
+		},
+		//动态计算标题
+		title() {
+			return this.activeName === "many" ? "动态参数" : "静态属性";
 		}
 	}
 };
