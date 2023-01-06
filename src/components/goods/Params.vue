@@ -21,26 +21,57 @@
 			<el-row class="cat_opt">
 				<span>选择商品分类:</span>
 				<!-- 选择商品分类的级联选择框 -->
+				<el-cascader
+					v-model="SelectedCateKeys"
+					:options="catList"
+					:props="{ expandTrigger: 'hover', ...cateProps }"
+					@change="handleChange"
+				></el-cascader>
 			</el-row>
 		</el-card>
 	</div>
 </template>
 
 <script>
+import { Select } from "element-ui";
+
 export default {
 	data() {
-		return {};
+		return {
+			catList  : [], // 商品分类列表
+			// 级联选择框的属性
+			cateProps: {
+				value   : "cat_id",
+				label   : "cat_name",
+				children: "children"
+			},
+			//级联选择框选中的双向绑定
+			SelectedCateKeys: []
+		};
 	},
 	created() {
 		this.getParamsList();
 	},
 	methods: {
 		async getParamsList() {
-			const res = await this.$http.get("categories", { params: { type: 3 } });
-			console.log(res);
+			const { data: res } = await this.$http.get("categories");
+			//获取失败
+			if (res.meta.status !== 200) {
+				return this.$message.error("获取商品分类列表失败");
+			}
+			//获取成功
+			this.catList = res.data;
+		},
+		//级联选择框选中项变化，会触发这个函数
+		handleChange() {
+			console.log(this.SelectedCateKeys);
 		}
 	}
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.el-cascader {
+	margin-left: 20px;
+}
+</style>
