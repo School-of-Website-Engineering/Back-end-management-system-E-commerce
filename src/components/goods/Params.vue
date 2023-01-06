@@ -30,12 +30,12 @@
 			</el-row>
 			<!-- tab页签 -->
 			<el-tabs v-model="activeName" @tab-click="handleClick">
-				<el-tab-pane label="动态参数" name="first">
+				<el-tab-pane label="动态参数" name="many">
 					<el-button type="primary" size="mini" :disabled="isBtnDisabled"
 						>添加参数</el-button
 					>
 				</el-tab-pane>
-				<el-tab-pane label="静态属性" name="second">
+				<el-tab-pane label="静态属性" name="only">
 					<el-button type="primary" size="mini" :disabled="isBtnDisabled"
 						>添加属性</el-button
 					>
@@ -59,7 +59,7 @@ export default {
 			//级联选择框选中的双向绑定
 			SelectedCateKeys: [],
 			// 被激活的tab页签的名称
-			activeName      : "first"
+			activeName      : "many"
 		};
 	},
 	created() {
@@ -77,17 +77,24 @@ export default {
 		},
 		//级联选择框选中项变化，会触发这个函数
 		handleChange() {
-			console.log(this.SelectedCateKeys);
-			//选中的不是三级分类
-			if (this.SelectedCateKeys.length !== 3) {
-				this.SelectedCateKeys = [];
-				return this.$message.warning("请选择三级分类");
-			}
-			//选中的是三级分类
+			this.getParamsData();
 		},
 		//tab页签点击事件
 		handleClick() {
-			console.log(this.activeName);
+			this.getParamsData();
+		},
+		//获取参数列表数据
+		async getParamsData() {
+			const { data: res } = await this.$http.get(
+				`categories/${this.cateId}/attributes`,
+				{params: {sel: this.activeName}}
+			);
+			//获取失败
+			if (res.meta.status !== 200) {
+				return this.$message.error("获取参数列表失败");
+			}
+			//获取成功
+			console.log(res);
 		}
 	},
 	computed: {
