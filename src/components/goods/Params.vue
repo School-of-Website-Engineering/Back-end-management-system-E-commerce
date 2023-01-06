@@ -28,12 +28,16 @@
 					@change="handleChange"
 				></el-cascader>
 			</el-row>
+			<!-- tab页签 -->
+			<el-tabs v-model="activeName" @tab-click="handleClick">
+				<el-tab-pane label="动态参数" name="first">动态参数</el-tab-pane>
+				<el-tab-pane label="静态属性" name="second">静态属性</el-tab-pane>
+			</el-tabs>
 		</el-card>
 	</div>
 </template>
 
 <script>
-
 export default {
 	data() {
 		return {
@@ -45,7 +49,9 @@ export default {
 				children: "children"
 			},
 			//级联选择框选中的双向绑定
-			SelectedCateKeys: []
+			SelectedCateKeys: [],
+			// 被激活的tab页签的名称
+			activeName      : "first"
 		};
 	},
 	created() {
@@ -64,6 +70,16 @@ export default {
 		//级联选择框选中项变化，会触发这个函数
 		handleChange() {
 			console.log(this.SelectedCateKeys);
+			//选中的不是三级分类
+			if (this.SelectedCateKeys.length !== 3) {
+				this.SelectedCateKeys = [];
+				return this.$message.warning("请选择三级分类");
+			}
+			//选中的是三级分类
+		},
+		//tab页签点击事件
+		handleClick() {
+			console.log(this.activeName);
 		}
 	}
 };
