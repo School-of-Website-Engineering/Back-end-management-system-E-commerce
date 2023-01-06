@@ -17,8 +17,11 @@
 				show-icon
 			></el-alert>
 			<br />
-			<!-- 选择商品分类的级联选择框 -->
-			
+			<!-- 选择商品分类区域 -->
+			<el-row class="cat_opt">
+				<span>选择商品分类:</span>
+				<!-- 选择商品分类的级联选择框 -->
+			</el-row>
 		</el-card>
 	</div>
 </template>
@@ -33,7 +36,7 @@ export default {
 	},
 	methods: {
 		async getParamsList() {
-			const res = await this.$http.get("categories", {params: {type: 3}});
+			const res = await this.$http.get("categories", { params: { type: 3 } });
 			console.log(res);
 		}
 	}
