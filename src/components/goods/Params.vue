@@ -16,6 +16,9 @@
 				closable
 				show-icon
 			></el-alert>
+			<br />
+			<!-- 选择商品分类的级联选择框 -->
+			
 		</el-card>
 	</div>
 </template>
