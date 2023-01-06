@@ -94,6 +94,10 @@ export default {
 		//如果按钮需要被禁用，则返回true，否则返回false
 		isBtnDisabled() {
 			return this.SelectedCateKeys.length !== 3;
+		},
+		//当前选中的三级分类的id
+		cateId() {
+			return this.SelectedCateKeys[2];
 		}
 	}
 };
