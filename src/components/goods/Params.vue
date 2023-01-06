@@ -59,7 +59,11 @@ export default {
 			//级联选择框选中的双向绑定
 			SelectedCateKeys: [],
 			// 被激活的tab页签的名称
-			activeName      : "many"
+			activeName      : "many",
+			//动态数据table
+			manyTableData : [],
+			//静态数据table
+			onlyTableData : [],
 		};
 	},
 	created() {
@@ -93,8 +97,12 @@ export default {
 			if (res.meta.status !== 200) {
 				return this.$message.error("获取参数列表失败");
 			}
-			//获取成功
-			console.log(res);
+			//获取成功,判断是动态参数还是静态属性
+			if (this.activeName === "many") {
+				this.manyTableData = res.data;
+			} else {
+				this.onlyTableData = res.data;
+			}
 		}
 	},
 	computed: {
