@@ -33,7 +33,6 @@
 </template>
 
 <script>
-import { Select } from "element-ui";
 
 export default {
 	data() {
