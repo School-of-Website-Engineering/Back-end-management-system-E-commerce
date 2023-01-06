@@ -51,7 +51,7 @@
 							prop="attr_name"
 						></el-table-column>
 						<el-table-column label="操作">
-							<template v-slot="scope">
+							<template v-slot="{}">
 								<el-button type="primary" size="mini" icon="el-icon-edit"
 									>编辑</el-button
 								>
@@ -83,7 +83,7 @@
 							prop="attr_name"
 						></el-table-column>
 						<el-table-column label="操作">
-							<template v-slot="scope">
+							<template v-slot="{}">
 								<el-button type="primary" size="mini" icon="el-icon-edit"
 									>编辑</el-button
 								>
@@ -127,31 +127,27 @@
 export default {
 	data() {
 		return {
-			catList: [], // 商品分类列表
+			catList  : [], // 商品分类列表
 			// 级联选择框的属性
 			cateProps: {
-				value: "cat_id",
-				label: "cat_name",
-				children: "children",
+				value   : "cat_id",
+				label   : "cat_name",
+				children: "children"
 			},
 			//级联选择框选中的双向绑定
 			SelectedCateKeys: [],
 			// 被激活的tab页签的名称
-			activeName: "many",
+			activeName      : "many",
 			//动态数据table
-			manyTableData: [],
+			manyTableData   : [],
 			//静态数据table
-			onlyTableData: [],
+			onlyTableData   : [],
 			// 添加参数对话框的显示与隐藏
 			addDialogVisible: false,
 			//添加参数的表单数据对象
-			addForm: { attr_name: "" },
+			addForm         : { attr_name: "" },
 			//添加参数的表单校验规则对象
-			addFormRules: {
-				attr_name: [
-					{ required: true, message: "请输入参数名称", trigger: "blur" },
-				],
-			},
+			addFormRules    : {attr_name: [{ required: true, message: "请输入参数名称", trigger: "blur" }]}
 		};
 	},
 	created() {
@@ -177,11 +173,10 @@ export default {
 		},
 		//获取参数列表数据
 		async getParamsData() {
-			const {
-				data: res,
-			} = await this.$http.get(`categories/${this.cateId}/attributes`, {
-				params: { sel: this.activeName },
-			});
+			const { data: res } = await this.$http.get(
+				`categories/${this.cateId}/attributes`,
+				{params: { sel: this.activeName }}
+			);
 			//获取失败
 			if (res.meta.status !== 200) {
 				return this.$message.error("获取参数列表失败");
@@ -189,7 +184,8 @@ export default {
 			//获取成功,判断是动态参数还是静态属性
 			if (this.activeName === "many") {
 				this.manyTableData = res.data;
-			} else {
+			}
+			else {
 				this.onlyTableData = res.data;
 			}
 		},
@@ -197,7 +193,7 @@ export default {
 		addDialogClosed() {
 			//重置表单
 			this.$refs.addFormRef.resetFields();
-		},
+		}
 	},
 	computed: {
 		//如果按钮需要被禁用，则返回true，否则返回false
@@ -211,8 +207,8 @@ export default {
 		//动态计算标题
 		title() {
 			return this.activeName === "many" ? "动态参数" : "静态属性";
-		},
-	},
+		}
+	}
 };
 </script>
 
