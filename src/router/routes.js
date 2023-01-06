@@ -46,6 +46,12 @@ export default [
 				path     : "/categories",
 				component: () => import("@/components/goods/Cate"),
 				name     : "categories"
+			},
+			//导入商品参数组件
+			{
+				path     : "/params",
+				component: () => import("@/components/goods/Params"),
+				name     : "params"
 			}
 		]
 	}
