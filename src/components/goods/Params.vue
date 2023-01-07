@@ -115,9 +115,7 @@
 			</el-form>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="addDialogVisible = false">取 消</el-button>
-				<el-button type="primary" @click="addDialogVisible = false"
-					>确 定</el-button
-				>
+				<el-button type="primary" @click="addParams">确 定</el-button>
 			</span>
 		</el-dialog>
 	</div>
@@ -173,10 +171,7 @@ export default {
 		},
 		//获取参数列表数据
 		async getParamsData() {
-			const { data: res } = await this.$http.get(
-				`categories/${this.cateId}/attributes`,
-				{params: { sel: this.activeName }}
-			);
+			const {data: res} = await this.$http.get(`categories/${this.cateId}/attributes`, {params: { sel: this.activeName }});
 			//获取失败
 			if (res.meta.status !== 200) {
 				return this.$message.error("获取参数列表失败");
@@ -193,6 +188,30 @@ export default {
 		addDialogClosed() {
 			//重置表单
 			this.$refs.addFormRef.resetFields();
+		},
+		//点击按钮添加参数
+		addParams() {
+			//校验表单
+			this.$refs.addFormRef.validate(async(valid) => {
+				if (!valid) {
+					return;
+				}
+				//校验通过，发送请求
+				const {data: res} = await this.$http.post(`categories/${this.cateId}/attributes`, {
+					attr_name: this.addForm.attr_name,
+					attr_sel : this.activeName
+				});
+				//添加失败
+				if (res.meta.status !== 201) {
+					return this.$message.error("添加参数失败");
+				}
+				//添加成功
+				this.$message.success("添加参数成功");
+				//关闭对话框
+				this.addDialogVisible = false;
+				//重新获取参数列表数据
+				await this.getParamsData();
+			});
 		}
 	},
 	computed: {
