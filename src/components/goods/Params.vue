@@ -45,9 +45,32 @@
 						<!-- 展开行 -->
 						<el-table-column type="expand">
 							<template v-slot="scope">
-								<el-tag closable type="" v-for="(item,i) in scope.row.attr_vals" :key="i" >{{
-									item
-								}}</el-tag>
+								<!-- 循环渲染tag -->
+								<el-tag
+									closable
+									type=""
+									v-for="(item, i) in scope.row.attr_vals"
+									:key="i"
+									>{{ item }}</el-tag
+								>
+								<!-- 输入 -->
+								<el-input
+									class="input-new-tag"
+									v-if="inputVisible"
+									v-model="inputValue"
+									ref="saveTagInput"
+									size="small"
+									@keyup.enter.native="handleInputConfirm"
+									@blur="handleInputConfirm"
+								>
+								</el-input>
+								<el-button
+									v-else
+									class="button-new-tag"
+									size="small"
+									@click="showInput"
+									>+ New Tag</el-button
+								>
 							</template>
 						</el-table-column>
 						<!-- 索引列 -->
@@ -195,7 +218,11 @@ export default {
 			//修改参数的表单数据对象
 			editForm         : { attr_name: "" },
 			//修改参数的表单校验规则对象
-			editFormRules    : {attr_name: [{ required: true, message: "请输入参数名称", trigger: "blur" }]}
+			editFormRules    : {attr_name: [{ required: true, message: "请输入参数名称", trigger: "blur" }]},
+			//按钮文本框的显示与隐藏
+			inputVisible   	 : false,
+			//按钮文本框的值
+			inputValue    		 : ""
 		};
 	},
 	created() {
@@ -226,10 +253,10 @@ export default {
 			if (res.meta.status !== 200) {
 				return this.$message.error("获取参数列表失败");
 			}
-			res.data.forEach(item => {
+			res.data.forEach((item) => {
 				item.attr_vals = item.attr_vals ? item.attr_vals.split(",") : [];
 			});
-			
+
 			console.log(res.data);
 			//获取成功,判断是动态参数还是静态属性
 			if (this.activeName === "many") {
@@ -345,7 +372,33 @@ export default {
 			this.$message.success("删除参数成功");
 			//重新获取参数列表数据
 			await this.getParamsData();
-		}
+		},
+		//文本框失去焦点，或摁下了 Enter都会触发
+		async handleInputConfirm() {
+			//校验表单
+			this.$refs.addParamsValuesFormRef.validate(async(valid) => {
+				if (!valid) {
+					return;
+				}
+				//校验通过，发送请求
+				const {data: res} = await this.$http.post(
+					`categories/${this.cateId}/attributes/${this.addParamsValuesForm.attr_id}/attr_vals`,
+					{ attr_value: this.addParamsValuesForm.attr_value }
+				);
+				//添加失败
+				if (res.meta.status !== 201) {
+					return this.$message.error("添加参数值失败");
+				}
+				//添加成功
+				this.$message.success("添加参数值成功");
+				//重新获取参数列表数据
+				await this.getParamsData();
+			});
+		},
+		//点击按钮，展示文本输入框
+		showInput() {
+			this.inputVisible = true;
+		},
 	},
 	computed: {
 		//如果按钮需要被禁用，则返回true，否则返回false
@@ -369,10 +422,13 @@ export default {
 	margin-left: 20px;
 }
 
-::v-deep .el-table .el-table__cell{
+::v-deep .el-table .el-table__cell {
 	text-align: center;
 }
-.el-tag{
+.el-tag {
 	margin: 0 20px;
+}
+.input-new-tag{
+	width: 100px;
 }
 </style>
