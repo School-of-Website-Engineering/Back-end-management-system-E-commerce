@@ -26,7 +26,7 @@
 				</el-col>
 				<el-col :span="4">
 					<!-- 添加商品按钮 -->
-					<el-button type="primary" icon="el-icon-plus">
+					<el-button type="primary" icon="el-icon-plus" @click="goAddPage">
 						添加商品
 					</el-button>
 				</el-col>
@@ -152,6 +152,10 @@ export default {
 			//删除成功
 			this.$message.success("删除商品成功！");
 			await this.getGoods();
+		},
+		//添加商品
+		goAddPage() {
+			this.$router.push("/goods/add");
 		}
 	},
 	mounted() {

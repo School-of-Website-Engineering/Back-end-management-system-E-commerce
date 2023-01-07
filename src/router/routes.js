@@ -58,6 +58,12 @@ export default [
 				path     : "/goods",
 				component: () => import("@/components/goods/List"),
 				name     : "goods"
+			},
+			//导入添加商品组件
+			{
+				path     : "/goods/add",
+				component: () => import("@/components/goods/Add"),
+				name     : "add"
 			}
 		]
 	}
