@@ -51,8 +51,12 @@
 							prop="attr_name"
 						></el-table-column>
 						<el-table-column label="操作">
-							<template v-slot="{}">
-								<el-button type="primary" size="mini" icon="el-icon-edit"
+							<template v-slot="scope">
+								<el-button
+									type="primary"
+									size="mini"
+									icon="el-icon-edit"
+									@click="showEditDialog(scope.row.attr_id)"
 									>编辑</el-button
 								>
 								<el-button type="danger" size="mini" icon="el-icon-delete"
@@ -83,8 +87,12 @@
 							prop="attr_name"
 						></el-table-column>
 						<el-table-column label="操作">
-							<template v-slot="{}">
-								<el-button type="primary" size="mini" icon="el-icon-edit"
+							<template v-slot="scope">
+								<el-button
+									type="primary"
+									size="mini"
+									icon="el-icon-edit"
+									@click="showEditDialog(scope.row.attr_id)"
 									>编辑</el-button
 								>
 								<el-button type="danger" size="mini" icon="el-icon-delete"
@@ -118,6 +126,28 @@
 				<el-button type="primary" @click="addParams">确 定</el-button>
 			</span>
 		</el-dialog>
+		<!-- 修改参数对话框 -->
+		<el-dialog
+			:title="`修改${title}`"
+			:visible.sync="editDialogVisible"
+			width="50%"
+			@close="editDialogClosed"
+		>
+			<el-form
+				:model="editForm"
+				:rules="editFormRules"
+				ref="editFormRef"
+				label-width="100px"
+			>
+				<el-form-item :label="title" prop="attr_name">
+					<el-input v-model="editForm.attr_name"></el-input>
+				</el-form-item>
+			</el-form>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="editDialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="editParams">确 定</el-button>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -133,19 +163,25 @@ export default {
 				children: "children"
 			},
 			//级联选择框选中的双向绑定
-			SelectedCateKeys: [],
+			SelectedCateKeys : [],
 			// 被激活的tab页签的名称
-			activeName      : "many",
+			activeName       : "many",
 			//动态数据table
-			manyTableData   : [],
+			manyTableData    : [],
 			//静态数据table
-			onlyTableData   : [],
+			onlyTableData    : [],
 			// 添加参数对话框的显示与隐藏
-			addDialogVisible: false,
+			addDialogVisible : false,
 			//添加参数的表单数据对象
-			addForm         : { attr_name: "" },
+			addForm          : { attr_name: "" },
 			//添加参数的表单校验规则对象
-			addFormRules    : {attr_name: [{ required: true, message: "请输入参数名称", trigger: "blur" }]}
+			addFormRules     : {attr_name: [{ required: true, message: "请输入参数名称", trigger: "blur" }]},
+			// 修改参数对话框的显示与隐藏
+			editDialogVisible: false,
+			//修改参数的表单数据对象
+			editForm         : { attr_name: "" },
+			//修改参数的表单校验规则对象
+			editFormRules    : {attr_name: [{ required: true, message: "请输入参数名称", trigger: "blur" }]}
 		};
 	},
 	created() {
@@ -197,10 +233,13 @@ export default {
 					return;
 				}
 				//校验通过，发送请求
-				const {data: res} = await this.$http.post(`categories/${this.cateId}/attributes`, {
-					attr_name: this.addForm.attr_name,
-					attr_sel : this.activeName
-				});
+				const { data: res } = await this.$http.post(
+					`categories/${this.cateId}/attributes`,
+					{
+						attr_name: this.addForm.attr_name,
+						attr_sel : this.activeName
+					}
+				);
 				//添加失败
 				if (res.meta.status !== 201) {
 					return this.$message.error("添加参数失败");
@@ -212,7 +251,53 @@ export default {
 				//重新获取参数列表数据
 				await this.getParamsData();
 			});
+		},
+		//点击按钮，展示修改的对话框
+		async showEditDialog(attrid) {
+			//查询当前的参数信息
+			const { data: res } = await this.$http.get(
+				`categories/${this.cateId}/attributes/${attrid}`,
+				{ params: { attr_sel: this.activeName } }
+			);
+			//查询失败
+			if (res.meta.status !== 200) {
+				return this.$message.error("查询参数信息失败");
+			}
+			//查询成功
+			this.editForm = res.data;
+			//展示对话框
+			this.editDialogVisible = true;
+		},
+		//监听修改参数对话框关闭事件
+		editDialogClosed() {
+			//重置表单
+			this.$refs.editFormRef.resetFields();
+		},
+		//点击按钮，修改参数
+		editParams() {
+			//校验表单
+			this.$refs.editFormRef.validate(async(valid) => {
+				if (!valid) {
+					return;
+				}
+				//校验通过，发送请求
+				const {data: res} = await this.$http.put(
+					`categories/${this.cateId}/attributes/${this.editForm.attr_id}`,
+					{ attr_name: this.editForm.attr_name, attr_sel: this.activeName }
+				);
+				//修改失败
+				if (res.meta.status !== 200) {
+					return this.$message.error("修改参数失败");
+				}
+				//修改成功
+				this.$message.success("修改参数成功");
+				//关闭对话框
+				this.editDialogVisible = false;
+				//重新获取参数列表数据
+				await this.getParamsData();
+			});
 		}
+		//点击按钮，删除参数
 	},
 	computed: {
 		//如果按钮需要被禁用，则返回true，否则返回false
