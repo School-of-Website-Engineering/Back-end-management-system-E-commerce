@@ -43,7 +43,13 @@
 					<!-- 动态参数表格 -->
 					<el-table :data="manyTableData" border stripe>
 						<!-- 展开行 -->
-						<el-table-column type="expand"></el-table-column>
+						<el-table-column type="expand">
+							<template v-slot="scope">
+								<el-tag closable type="" v-for="(item,i) in scope.row.attr_vals" :key="i" >{{
+									item
+								}}</el-tag>
+							</template>
+						</el-table-column>
 						<!-- 索引列 -->
 						<el-table-column type="index" label="#"></el-table-column>
 						<el-table-column
@@ -220,6 +226,11 @@ export default {
 			if (res.meta.status !== 200) {
 				return this.$message.error("获取参数列表失败");
 			}
+			res.data.forEach(item => {
+				item.attr_vals = item.attr_vals ? item.attr_vals.split(",") : [];
+			});
+			
+			console.log(res.data);
 			//获取成功,判断是动态参数还是静态属性
 			if (this.activeName === "many") {
 				this.manyTableData = res.data;
@@ -356,5 +367,12 @@ export default {
 <style scoped lang="scss">
 .el-cascader {
 	margin-left: 20px;
+}
+
+::v-deep .el-table .el-table__cell{
+	text-align: center;
+}
+.el-tag{
+	margin: 0 20px;
 }
 </style>
