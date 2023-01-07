@@ -113,7 +113,37 @@
 					<!-- 静态表格 -->
 					<el-table :data="onlyTableData" border stripe>
 						<!-- 展开行 -->
-						<el-table-column type="expand"></el-table-column>
+						<el-table-column type="expand">
+							<template v-slot="scope">
+								<!-- 循环渲染tag -->
+								<el-tag
+									closable
+									type=""
+									v-for="(item, i) in scope.row.attr_vals"
+									:key="i"
+									@close="handleClose(i, scope.row)"
+									>{{ item }}</el-tag
+								>
+								<!-- 输入 -->
+								<el-input
+									class="input-new-tag"
+									v-if="scope.row.inputVisible"
+									v-model.trim="scope.row.inputValue"
+									ref="saveTagInput"
+									size="small"
+									@keyup.enter.native="handleInputConfirm(scope.row)"
+									@blur="handleInputConfirm(scope.row)"
+								>
+								</el-input>
+								<el-button
+									v-else
+									class="button-new-tag"
+									size="small"
+									@click="showInput(scope.row)"
+									>+ New Tag</el-button
+								>
+							</template>
+						</el-table-column>
 						<!-- 索引列 -->
 						<el-table-column type="index" label="#"></el-table-column>
 						<el-table-column
