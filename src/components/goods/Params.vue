@@ -51,6 +51,7 @@
 									type=""
 									v-for="(item, i) in scope.row.attr_vals"
 									:key="i"
+									@close="handleClose(i, scope.row)"
 									>{{ item }}</el-tag
 								>
 								<!-- 输入 -->
@@ -381,8 +382,20 @@ export default {
 			row.attr_vals.push(row.inputValue.trim());
 			row.inputValue = "";
 			row.inputVisible = false;
+			await this.saveAttrValue(row);
+		},
+		//点击按钮，展示文本输入框
+		showInput(row) {
+			row.inputVisible = true;
+			//获取焦点
+			this.$nextTick(() => {
+				this.$refs.saveTagInput.$refs.input.focus();
+			});
+		},
+		//将对attr_vals的操作，保存到数据库
+		async saveAttrValue(row) {
 			//发送请求，修改参数的值
-			const {data: res} = await this.$http.put(
+			const { data: res } = await this.$http.put(
 				`categories/${this.cateId}/attributes/${row.attr_id}`,
 				{
 					attr_name: row.attr_name,
@@ -397,13 +410,11 @@ export default {
 			//修改成功
 			this.$message.success("修改参数值成功");
 		},
-		//点击按钮，展示文本输入框
-		showInput(row) {
-			row.inputVisible = true;
-			//获取焦点
-			this.$nextTick(() => {
-				this.$refs.saveTagInput.$refs.input.focus();
-			});
+		//点击按钮，删除参数值
+		async handleClose(i, row) {
+			row.attr_vals.splice(i, 1);
+			//发送请求，修改参数的值
+			await this.saveAttrValue(row);
 		}
 	},
 	computed: {
@@ -432,7 +443,7 @@ export default {
 	text-align: center;
 }
 .el-tag {
-	margin: 0 20px;
+	margin: 10px 20px;
 }
 .input-new-tag {
 	width: 100px;
