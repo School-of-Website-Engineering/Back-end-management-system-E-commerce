@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/compare/v1.0.9...v1.1.0) (2023-01-07)
+
+
+### Features
+
+* update add goods ([bc9e70f](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/commit/bc9e70f322d23ffd7d9904aeddccf4b10cbe5e3c))
+
 ## [1.0.9](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/compare/v1.0.8...v1.0.9) (2023-01-07)
 
 
