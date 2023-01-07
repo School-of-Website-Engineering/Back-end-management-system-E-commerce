@@ -163,41 +163,33 @@
 export default {
 	data() {
 		return {
-			catList: [], // 商品分类列表
+			catList  : [], // 商品分类列表
 			// 级联选择框的属性
 			cateProps: {
-				value: "cat_id",
-				label: "cat_name",
-				children: "children",
+				value   : "cat_id",
+				label   : "cat_name",
+				children: "children"
 			},
 			//级联选择框选中的双向绑定
-			SelectedCateKeys: [],
+			SelectedCateKeys : [],
 			// 被激活的tab页签的名称
-			activeName: "many",
+			activeName       : "many",
 			//动态数据table
-			manyTableData: [],
+			manyTableData    : [],
 			//静态数据table
-			onlyTableData: [],
+			onlyTableData    : [],
 			// 添加参数对话框的显示与隐藏
-			addDialogVisible: false,
+			addDialogVisible : false,
 			//添加参数的表单数据对象
-			addForm: { attr_name: "" },
+			addForm          : { attr_name: "" },
 			//添加参数的表单校验规则对象
-			addFormRules: {
-				attr_name: [
-					{ required: true, message: "请输入参数名称", trigger: "blur" },
-				],
-			},
+			addFormRules     : {attr_name: [{ required: true, message: "请输入参数名称", trigger: "blur" }]},
 			// 修改参数对话框的显示与隐藏
 			editDialogVisible: false,
 			//修改参数的表单数据对象
-			editForm: { attr_name: "" },
+			editForm         : { attr_name: "" },
 			//修改参数的表单校验规则对象
-			editFormRules: {
-				attr_name: [
-					{ required: true, message: "请输入参数名称", trigger: "blur" },
-				],
-			},
+			editFormRules    : {attr_name: [{ required: true, message: "请输入参数名称", trigger: "blur" }]}
 		};
 	},
 	created() {
@@ -223,11 +215,7 @@ export default {
 		},
 		//获取参数列表数据
 		async getParamsData() {
-			const {
-				data: res,
-			} = await this.$http.get(`categories/${this.cateId}/attributes`, {
-				params: { sel: this.activeName },
-			});
+			const {data: res} = await this.$http.get(`categories/${this.cateId}/attributes`, {params: { sel: this.activeName }});
 			//获取失败
 			if (res.meta.status !== 200) {
 				return this.$message.error("获取参数列表失败");
@@ -235,7 +223,8 @@ export default {
 			//获取成功,判断是动态参数还是静态属性
 			if (this.activeName === "many") {
 				this.manyTableData = res.data;
-			} else {
+			}
+			else {
 				this.onlyTableData = res.data;
 			}
 		},
@@ -247,7 +236,7 @@ export default {
 		//点击按钮添加参数
 		addParams() {
 			//校验表单
-			this.$refs.addFormRef.validate(async (valid) => {
+			this.$refs.addFormRef.validate(async(valid) => {
 				if (!valid) {
 					return;
 				}
@@ -256,8 +245,8 @@ export default {
 					`categories/${this.cateId}/attributes`,
 					{
 						attr_name: this.addForm.attr_name,
-						attr_sel: this.activeName,
-					},
+						attr_sel : this.activeName
+					}
 				);
 				//添加失败
 				if (res.meta.status !== 201) {
@@ -274,11 +263,9 @@ export default {
 		//点击按钮，展示修改的对话框
 		async showEditDialog(attrid) {
 			//查询当前的参数信息
-			const {
-				data: res,
-			} = await this.$http.get(
+			const {data: res} = await this.$http.get(
 				`categories/${this.cateId}/attributes/${attrid}`,
-				{ params: { attr_sel: this.activeName } },
+				{ params: { attr_sel: this.activeName } }
 			);
 			//查询失败
 			if (res.meta.status !== 200) {
@@ -297,16 +284,14 @@ export default {
 		//点击按钮，修改参数
 		editParams() {
 			//校验表单
-			this.$refs.editFormRef.validate(async (valid) => {
+			this.$refs.editFormRef.validate(async(valid) => {
 				if (!valid) {
 					return;
 				}
 				//校验通过，发送请求
-				const {
-					data: res,
-				} = await this.$http.put(
+				const {data: res} = await this.$http.put(
 					`categories/${this.cateId}/attributes/${this.editForm.attr_id}`,
-					{ attr_name: this.editForm.attr_name, attr_sel: this.activeName },
+					{ attr_name: this.editForm.attr_name, attr_sel: this.activeName }
 				);
 				//修改失败
 				if (res.meta.status !== 200) {
@@ -328,20 +313,18 @@ export default {
 				"提示",
 				{
 					confirmButtonText: "确定",
-					cancelButtonText: "取消",
-					type: "warning",
-				},
+					cancelButtonText : "取消",
+					type             : "warning"
+				}
 			);
 			//用户取消删除
 			if (confirmResult === "cancel") {
 				return this.$message.info("已取消删除");
 			}
 			//用户确认删除，发送请求
-			const {
-				data: res,
-			} = await this.$http.delete(
+			const {data: res} = await this.$http.delete(
 				`categories/${this.cateId}/attributes/${attrid}`,
-				{ params: { attr_sel: this.activeName } },
+				{ params: { attr_sel: this.activeName } }
 			);
 			//删除失败
 			if (res.meta.status !== 200) {
@@ -351,7 +334,7 @@ export default {
 			this.$message.success("删除参数成功");
 			//重新获取参数列表数据
 			await this.getParamsData();
-		},
+		}
 	},
 	computed: {
 		//如果按钮需要被禁用，则返回true，否则返回false
@@ -365,8 +348,8 @@ export default {
 		//动态计算标题
 		title() {
 			return this.activeName === "many" ? "动态参数" : "静态属性";
-		},
-	},
+		}
+	}
 };
 </script>
 
