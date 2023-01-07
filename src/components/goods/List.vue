@@ -95,22 +95,20 @@ export default {
 		return {
 			//查询参数
 			queryInfo: {
-				query: "",
-				pagenum: 1,
-				pagesize: 10,
+				query   : "",
+				pagenum : 1,
+				pagesize: 10
 			},
 			//商品列表数据
 			goodsList: [],
 			//总条数
-			total: 0,
+			total    : 0
 		};
 	},
 	methods: {
 		//获取商品列表数据
 		async getGoods() {
-			const { data: res } = await this.$http.get("goods", {
-				params: this.queryInfo,
-			});
+			const { data: res } = await this.$http.get("goods", {params: this.queryInfo});
 			//获取失败
 			if (res.meta.status !== 200) {
 				return this.$message.error("获取商品列表失败！");
@@ -137,9 +135,9 @@ export default {
 				"提示",
 				{
 					confirmButtonText: "确定",
-					cancelButtonText: "取消",
-					type: "warning",
-				},
+					cancelButtonText : "取消",
+					type             : "warning"
+				}
 			).catch((err) => err);
 			//取消删除
 			if (confirmResult === "cancel") {
@@ -154,11 +152,11 @@ export default {
 			//删除成功
 			this.$message.success("删除商品成功！");
 			await this.getGoods();
-		},
+		}
 	},
 	mounted() {
 		this.getGoods();
-	},
+	}
 };
 </script>
 
