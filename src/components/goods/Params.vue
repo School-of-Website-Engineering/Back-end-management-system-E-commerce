@@ -59,7 +59,11 @@
 									@click="showEditDialog(scope.row.attr_id)"
 									>编辑</el-button
 								>
-								<el-button type="danger" size="mini" icon="el-icon-delete"
+								<el-button
+									type="danger"
+									size="mini"
+									icon="el-icon-delete"
+									@click="removeParams(scope.row.attr_id)"
 									>删除</el-button
 								>
 							</template>
@@ -95,7 +99,11 @@
 									@click="showEditDialog(scope.row.attr_id)"
 									>编辑</el-button
 								>
-								<el-button type="danger" size="mini" icon="el-icon-delete"
+								<el-button
+									type="danger"
+									size="mini"
+									icon="el-icon-delete"
+									@click="removeParams(scope.row.attr_id)"
 									>删除</el-button
 								>
 							</template>
@@ -255,7 +263,7 @@ export default {
 		//点击按钮，展示修改的对话框
 		async showEditDialog(attrid) {
 			//查询当前的参数信息
-			const { data: res } = await this.$http.get(
+			const {data: res} = await this.$http.get(
 				`categories/${this.cateId}/attributes/${attrid}`,
 				{ params: { attr_sel: this.activeName } }
 			);
@@ -296,8 +304,37 @@ export default {
 				//重新获取参数列表数据
 				await this.getParamsData();
 			});
-		}
+		},
 		//点击按钮，删除参数
+		async removeParams(attrid) {
+			//提示用户是否删除
+			const confirmResult = await this.$confirm(
+				"此操作将永久删除该参数, 是否继续?",
+				"提示",
+				{
+					confirmButtonText: "确定",
+					cancelButtonText : "取消",
+					type             : "warning"
+				}
+			);
+			//用户取消删除
+			if (confirmResult === "cancel") {
+				return this.$message.info("已取消删除");
+			}
+			//用户确认删除，发送请求
+			const {data: res} = await this.$http.delete(
+				`categories/${this.cateId}/attributes/${attrid}`,
+				{ params: { attr_sel: this.activeName } }
+			);
+			//删除失败
+			if (res.meta.status !== 200) {
+				return this.$message.error("删除参数失败");
+			}
+			//删除成功
+			this.$message.success("删除参数成功");
+			//重新获取参数列表数据
+			await this.getParamsData();
+		}
 	},
 	computed: {
 		//如果按钮需要被禁用，则返回true，否则返回false
