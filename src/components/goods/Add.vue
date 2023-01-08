@@ -88,14 +88,37 @@
 						</el-form-item>
 					</el-tab-pane>
 					<el-tab-pane label="商品属性" name="2">
-						
+						<!--渲染表单的Item项-->
+						<el-form-item
+							v-for="item in onlyTableData"
+							:key="item.attr_id"
+							:label="item.attr_name"
+						>
+							<!-- 输入框 -->
+							<el-input v-model="item.attr_vals"></el-input>
+						</el-form-item>
 					</el-tab-pane>
-					<el-tab-pane label="商品图片" name="3">商品图片</el-tab-pane>
+					<el-tab-pane label="商品图片" name="3">
+						<el-upload
+							:action="uploadUrl"
+							:on-preview="handlePreview"
+							:on-remove="handleRemove"
+							:headers="headers"
+							list-type="picture"
+							:on-success="handleSuccess"
+						>
+							<el-button size="small" type="primary">点击上传</el-button>
+						</el-upload>
+					</el-tab-pane>
 					<el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
 				</el-tabs>
 			</el-form>
 		</el-card>
 		<br />
+		<!-- 图片预览 -->
+		<el-dialog title="提示" :visible.sync="previewVisible" width="50%">
+			<img :src="previewPath" class="previewImg"/>
+		</el-dialog>
 	</div>
 </template>
 
@@ -117,7 +140,8 @@ export default {
 				promote_end_date  : "",
 				goods_img         : "",
 				goods_imgs        : [],
-				goods_content     : ""
+				goods_content     : "",
+				pics              : []
 			},
 			// 表单验证规则
 			addFormRules: {
@@ -135,9 +159,17 @@ export default {
 				children: "children"
 			},
 			//动态参数列表数据
-			manyTableData: [],
+			manyTableData : [],
 			//静态属性列表数据
-			onlyTableData: []
+			onlyTableData : [],
+			//上传图片的地址
+			uploadUrl     : "https://lianghj.top:8888/api/private/v1/upload",
+			//请求头
+			headers       : { Authorization: sessionStorage.getItem("token") },
+			//图片预览
+			previewPath   : "",
+			//图片预览的对话框
+			previewVisible: false
 		};
 	},
 	methods: {
@@ -189,6 +221,27 @@ export default {
 				});
 				this.onlyTableData = res.data;
 			}
+		},
+		//处理图片预览效果
+		handlePreview(file) {
+			this.previewPath = file.response.data.url;
+			this.previewVisible = true;
+		},
+
+		//处理移除图片
+		handleRemove(file) {
+			const filePath = file.response.data.tmp_path;
+			const index = this.addForm.pics.findIndex((x) => x.pic === filePath);
+			this.addForm.pics.splice(index, 1);
+		},
+		//上传图片成功
+		// 1．拼接得到一个图片信息对象 2．将图片信息对象，push 到pics数组中
+		handleSuccess(res) {
+			const picInfo = {
+				//图片地址
+				pic: res.data.tmp_path
+			};
+			this.addForm.pics.push(picInfo);
 		}
 	},
 	mounted() {
@@ -205,4 +258,8 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.previewImg{
+	width: 100%;
+}
+</style>
