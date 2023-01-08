@@ -110,19 +110,30 @@
 							<el-button size="small" type="primary">点击上传</el-button>
 						</el-upload>
 					</el-tab-pane>
-					<el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
+					<el-tab-pane label="商品内容" name="4">
+						<!-- 富文本编辑器 -->
+						<quill-editor
+							ref="myQuillEditor"
+							v-model="addForm.goods_introduce"
+						></quill-editor>
+						<!-- 添加商品按钮 -->
+						<br />
+						<el-button type="primary" @click="addGoods">添加商品</el-button>
+					</el-tab-pane>
 				</el-tabs>
 			</el-form>
 		</el-card>
 		<br />
 		<!-- 图片预览 -->
 		<el-dialog title="提示" :visible.sync="previewVisible" width="50%">
-			<img :src="previewPath" class="previewImg"/>
+			<img :src="previewPath" class="previewImg" />
 		</el-dialog>
 	</div>
 </template>
 
 <script>
+//lodash
+import _ from "lodash";
 export default {
 	data() {
 		return {
@@ -141,7 +152,10 @@ export default {
 				goods_img         : "",
 				goods_imgs        : [],
 				goods_content     : "",
-				pics              : []
+				pics              : [],
+				//商品描述
+				goods_introduce   : "",
+				attrs             : []
 			},
 			// 表单验证规则
 			addFormRules: {
@@ -242,6 +256,38 @@ export default {
 				pic: res.data.tmp_path
 			};
 			this.addForm.pics.push(picInfo);
+		},
+		//添加商品
+		async addGoods() {
+			//校验表单
+			this.$refs.addFormRef.validate(async(valid) => {
+				if (!valid) {
+					return this.$message.error("请完善商品信息");
+				}
+				//校验通过
+				const form = _.cloneDeep(this.addForm);
+				form.goods_cat = form.goods_cat.join(",");
+				//处理动态参数
+				this.manyTableData.forEach((item) => {
+					const newInfo = {
+						attr_id  : item.attr_id,
+						attr_sel : item.attr_sel,
+						attr_vals: item.attr_vals.join(" ")
+					};
+					this.addForm.attrs.push(newInfo);
+				});
+				// 处理静态属性
+				this.onlyTableData.forEach((item) => {
+					const newInfo = {
+						attr_id  : item.attr_id,
+						attr_sel : item.attr_sel,
+						attr_vals: item.attr_vals
+					};
+					this.addForm.attrs.push(newInfo);
+				});
+				form.attrs = this.addForm.attrs;
+				
+			});
 		}
 	},
 	mounted() {
@@ -259,7 +305,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.previewImg{
+.previewImg {
 	width: 100%;
+}
+.ql-editor {
+	min-height: 300px;
 }
 </style>
