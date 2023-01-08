@@ -87,7 +87,9 @@
 							</el-checkbox-group>
 						</el-form-item>
 					</el-tab-pane>
-					<el-tab-pane label="商品属性" name="2">商品属性</el-tab-pane>
+					<el-tab-pane label="商品属性" name="2">
+						
+					</el-tab-pane>
 					<el-tab-pane label="商品图片" name="3">商品图片</el-tab-pane>
 					<el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
 				</el-tabs>
@@ -132,7 +134,10 @@ export default {
 				value   : "cat_id",
 				children: "children"
 			},
-			manyTableData: []
+			//动态参数列表数据
+			manyTableData: [],
+			//静态属性列表数据
+			onlyTableData: []
 		};
 	},
 	methods: {
@@ -159,10 +164,7 @@ export default {
 		},
 		async tabClicked() {
 			if (this.activeIndex === "1") {
-				const { data: res } = await this.$http.get(
-					`categories/${this.cateId}/attributes`,
-					{params: { sel: "many" }}
-				);
+				const {data: res} = await this.$http.get(`categories/${this.cateId}/attributes`, {params: { sel: "many" }});
 
 				//获取失败
 				if (res.meta.status !== 200) {
@@ -173,6 +175,19 @@ export default {
 						item.attr_vals.length === 0 ? [] : item.attr_vals.split(",");
 				});
 				this.manyTableData = res.data;
+			}
+			else if (this.activeIndex === "2") {
+				const {data: res} = await this.$http.get(`categories/${this.cateId}/attributes`, {params: { sel: "only" }});
+
+				//获取失败
+				if (res.meta.status !== 200) {
+					return this.$message.error("获取静态属性失败");
+				}
+				res.data.forEach((item) => {
+					item.attr_vals =
+						item.attr_vals.length === 0 ? [] : item.attr_vals.split(",");
+				});
+				this.onlyTableData = res.data;
 			}
 		}
 	},
