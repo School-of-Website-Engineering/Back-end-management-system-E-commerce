@@ -37,13 +37,13 @@
 					</template>
 				</el-table-column>
 				<el-table-column label="操作">
-					<template v-solt="scope">
+					<template>
 						<!-- 带图标的button -->
 						<el-button
 							type="primary"
 							icon="el-icon-edit"
 							size="mini"
-							@click="showEditDialog(scope.row)"
+							@click="showEditDialog"
 						></el-button>
 						<el-button
 							type="success"
@@ -79,14 +79,17 @@
 				:rules="editAddressFormRules"
 			>
 				<el-form-item label="省市区县" prop="address1">
-					<el-input v-model="editAddressForm.address1"></el-input>
+					<el-cascader
+						:options="cityData"
+						v-model="editAddressForm.address1"
+					></el-cascader>
 				</el-form-item>
 				<el-form-item label="详细地址" prop="address2">
 					<el-input v-model="editAddressForm.address2"></el-input>
 				</el-form-item>
 			</el-form>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="editAddressDialogVisible = false">取 消</el-button>
+				<el-button @click="addressDialogClosed">取 消</el-button>
 				<el-button type="primary" @click="editAddress">确 定</el-button>
 			</span>
 		</el-dialog>
@@ -94,6 +97,7 @@
 </template>
 
 <script>
+import cityData from "./citydata";
 export default {
 	data() {
 		return {
@@ -106,13 +110,14 @@ export default {
 			orderlist               : [],
 			editAddressDialogVisible: false,
 			editAddressForm         : {
-				address1: "",
+				address1: [],
 				address2: ""
 			},
 			editAddressFormRules: {
 				address1: [{ required: true, message: "请输入省市区县", trigger: "blur" }],
 				address2: [{ required: true, message: "请输入详细地址", trigger: "blur" }]
-			}
+			},
+			cityData
 		};
 	},
 	methods: {
@@ -136,9 +141,32 @@ export default {
 			this.queryInfo.pagenum = newPage;
 			this.getOrderList();
 		},
-		//编辑按钮
-		showEditDialog(row) {
-			this.$router.push(`/orders/${row.order_id}`);
+		//编辑按钮展示对话框
+		showEditDialog() {
+			this.editAddressDialogVisible = true;
+		},
+		//取消
+		addressDialogClosed() {
+			this.$refs.editAddressForm.resetFields();
+			this.editAddressDialogVisible = false;
+		},
+		//修改地址
+		editAddress() {
+			this.$refs.editAddressForm.validate(async(valid) => {
+				if (!valid) {
+					return false;
+				}
+				const { data: res } = await this.$http.put(
+					"orders/:id",
+					this.editAddressForm
+				);
+				if (res.meta.status !== 200) {
+					return this.$message.error("修改地址失败");
+				}
+				this.$message.success("修改地址成功");
+				this.editAddressDialogVisible = false;
+				await this.getOrderList();
+			});
 		}
 	},
 	mounted() {
@@ -150,5 +178,8 @@ export default {
 <style lang="scss" scoped>
 ::v-deep .el-table .el-table__cell {
 	text-align: center;
+}
+.el-cascader {
+	width: 100%;
 }
 </style>
