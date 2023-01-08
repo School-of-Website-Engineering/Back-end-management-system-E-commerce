@@ -286,7 +286,15 @@ export default {
 					this.addForm.attrs.push(newInfo);
 				});
 				form.attrs = this.addForm.attrs;
-				
+				//发送请求
+				const {data: res} = await this.$http.post("goods", form);
+				//添加失败
+				if (res.meta.status !== 201) {
+					return this.$message.error("添加商品失败");
+				}
+				//添加成功
+				this.$message.success("添加商品成功");
+				await this.$router.push("/goods");
 			});
 		}
 	},
