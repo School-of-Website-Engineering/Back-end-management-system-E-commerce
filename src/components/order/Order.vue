@@ -43,6 +43,7 @@
 							type="primary"
 							icon="el-icon-edit"
 							size="mini"
+							@click="showEditDialog(scope.row)"
 						></el-button>
 						<el-button
 							type="success"
@@ -65,6 +66,30 @@
 				@current-change="handleCurrentChange"
 			></el-pagination>
 		</el-card>
+		<!-- 修改地址对话框 -->
+		<el-dialog
+			title="修改地址"
+			:visible.sync="editAddressDialogVisible"
+			width="50%"
+		>
+			<el-form
+				ref="editAddressForm"
+				:model="editAddressForm"
+				label-width="100px"
+				:rules="editAddressFormRules"
+			>
+				<el-form-item label="省市区县" prop="address1">
+					<el-input v-model="editAddressForm.address1"></el-input>
+				</el-form-item>
+				<el-form-item label="详细地址" prop="address2">
+					<el-input v-model="editAddressForm.address2"></el-input>
+				</el-form-item>
+			</el-form>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="editAddressDialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="editAddress">确 定</el-button>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -77,8 +102,17 @@ export default {
 				pagenum : 1,
 				pagesize: 10
 			},
-			total    : 0,
-			orderlist: []
+			total                   : 0,
+			orderlist               : [],
+			editAddressDialogVisible: false,
+			editAddressForm         : {
+				address1: "",
+				address2: ""
+			},
+			editAddressFormRules: {
+				address1: [{ required: true, message: "请输入省市区县", trigger: "blur" }],
+				address2: [{ required: true, message: "请输入详细地址", trigger: "blur" }]
+			}
 		};
 	},
 	methods: {
@@ -101,6 +135,10 @@ export default {
 		handleCurrentChange(newPage) {
 			this.queryInfo.pagenum = newPage;
 			this.getOrderList();
+		},
+		//编辑按钮
+		showEditDialog(row) {
+			this.$router.push(`/orders/${row.order_id}`);
 		}
 	},
 	mounted() {
