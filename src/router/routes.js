@@ -64,6 +64,12 @@ export default [
 				path     : "/goods/add",
 				component: () => import("@/components/goods/Add"),
 				name     : "add"
+			},
+			//导入订单组件
+			{
+				path     : "/orders",
+				component: () => import("@/components/order/Order"),
+				name     : "orders"
 			}
 		]
 	}
