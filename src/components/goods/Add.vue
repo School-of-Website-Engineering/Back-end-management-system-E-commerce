@@ -87,7 +87,9 @@
 							</el-checkbox-group>
 						</el-form-item>
 					</el-tab-pane>
-					<el-tab-pane label="商品属性" name="2">商品属性</el-tab-pane>
+					<el-tab-pane label="商品属性" name="2">
+						
+					</el-tab-pane>
 					<el-tab-pane label="商品图片" name="3">商品图片</el-tab-pane>
 					<el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
 				</el-tabs>
