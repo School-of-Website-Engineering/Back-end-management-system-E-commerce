@@ -52,6 +52,18 @@
 					</template>
 				</el-table-column>
 			</el-table>
+			<!-- 分页 -->
+			<br />
+			<el-pagination
+				background
+				:current-page="queryInfo.pagenum"
+				:page-sizes="[5, 10, 15, 20]"
+				:page-size="queryInfo.pagesize"
+				layout="total, sizes, prev, pager, next, jumper"
+				:total="total"
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+			></el-pagination>
 		</el-card>
 	</div>
 </template>
@@ -79,6 +91,16 @@ export default {
 			//获取数据成功
 			this.orderlist = res.data.goods;
 			this.total = res.data.total;
+		},
+		//页码改变
+		handleSizeChange(newSize) {
+			this.queryInfo.pagesize = newSize;
+			this.getOrderList();
+		},
+		//每页条数改变
+		handleCurrentChange(newPage) {
+			this.queryInfo.pagenum = newPage;
+			this.getOrderList();
 		}
 	},
 	mounted() {
