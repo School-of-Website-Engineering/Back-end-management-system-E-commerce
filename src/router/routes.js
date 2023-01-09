@@ -70,6 +70,12 @@ export default [
 				path     : "/orders",
 				component: () => import("@/components/order/Order"),
 				name     : "orders"
+			},
+			//导入数据报表组件
+			{
+				path     : "/reports",
+				component: () => import("@/components/report/Report"),
+				name     : "reports"
 			}
 		]
 	}
