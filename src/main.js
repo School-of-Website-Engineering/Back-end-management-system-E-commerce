@@ -14,16 +14,27 @@ import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 Vue.use(VueQuillEditor);
 
+//导入nprogress
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
+
+
 //导入axios
 import axios from "axios";
 //配置axios的基础路径
 axios.defaults.baseURL = "https://lianghj.top:8888/api/private/v1/";
 Vue.prototype.$http = axios;
-//请求拦截器
+//请求拦截器,在request拦截器中展示进度条NProgress.start()
 axios.interceptors.request.use((config) => {
 	config.headers.Authorization = window.sessionStorage.getItem("token");
+	NProgress.start();
 	return config;
 });
+//在response拦截器中隐藏进度条NProgress.done()
+axios.interceptors.response.use((config) => {
+	NProgress.done();
+	return config;
+})
 
 //导入表格树插件
 import ZkTable from "vue-table-with-tree-grid";
