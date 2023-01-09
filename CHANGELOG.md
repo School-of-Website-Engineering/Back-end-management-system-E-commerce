@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/compare/v1.2.3...v1.2.4) (2023-01-09)
+
+
+### update
+
+* 项目更新完毕 ([1c15311](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/commit/1c15311f7dce4e2de316467125198f3adb05f123))
+
 ## [1.2.3](https://github.com/School-of-Website-Engineering/Back-end-management-system-E-commerce/compare/v1.2.2...v1.2.3) (2023-01-09)
 
 
