@@ -25,12 +25,12 @@ export default {
 		return {
 			// 需要合并的数据
 			options: {
-				title  : {text: "用户来源"},
+				title  : { text: "用户来源" },
 				tooltip: {
 					trigger    : "axis",
 					axisPointer: {
 						type : "cross",
-						label: {backgroundColor: "#E9EEF3"}
+						label: { backgroundColor: "#E9EEF3" }
 					}
 				},
 				grid: {
@@ -39,8 +39,8 @@ export default {
 					bottom      : "3%",
 					containLabel: true
 				},
-				xAxis: [{boundaryGap: false}],
-				yAxis: [{type: "value"}]
+				xAxis: [{ boundaryGap: false }],
+				yAxis: [{ type: "value" }]
 			}
 		};
 	},
