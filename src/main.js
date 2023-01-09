@@ -27,7 +27,6 @@ axios.interceptors.request.use((config) => {
 
 //导入表格树插件
 import ZkTable from "vue-table-with-tree-grid";
-
 Vue.use(ZkTable);
 
 Vue.filter("dateFormat", function(originVal){

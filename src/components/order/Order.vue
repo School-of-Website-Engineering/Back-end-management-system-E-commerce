@@ -96,7 +96,16 @@
 		</el-dialog>
 		<!-- 展示物流进度的对话框 -->
 		<el-dialog title="物流进度" :visible.sync="progressBoxVisible" width="50%">
-			<span slot="footer" class="dialog-footer"> </span>
+			<!-- 时间线 -->
+			<el-timeline>
+				<el-timeline-item
+					v-for="(item, index) in progressInfo"
+					:key="index"
+					:timestamp="item.time"
+				>
+					{{ item.context }}
+				</el-timeline-item>
+			</el-timeline>
 		</el-dialog>
 	</div>
 </template>
