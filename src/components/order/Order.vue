@@ -49,6 +49,7 @@
 							type="success"
 							icon="el-icon-location"
 							size="mini"
+							@click="showProgressBox"
 						></el-button>
 					</template>
 				</el-table-column>
@@ -93,6 +94,10 @@
 				<el-button type="primary" @click="editAddress">确 定</el-button>
 			</span>
 		</el-dialog>
+		<!-- 展示物流进度的对话框 -->
+		<el-dialog title="物流进度" :visible.sync="progressBoxVisible" width="50%">
+			<span slot="footer" class="dialog-footer"> </span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -117,7 +122,9 @@ export default {
 				address1: [{ required: true, message: "请输入省市区县", trigger: "blur" }],
 				address2: [{ required: true, message: "请输入详细地址", trigger: "blur" }]
 			},
-			cityData
+			cityData,
+			progressBoxVisible: false,
+			progressInfo      : []
 		};
 	},
 	methods: {
@@ -167,6 +174,19 @@ export default {
 				this.editAddressDialogVisible = false;
 				await this.getOrderList();
 			});
+		},
+		//显示物流进度
+		async showProgressBox() {
+			this.progressBoxVisible = true;
+			const { data: res } = await this.$http.get("kuaidi/1106975712662");
+			//获取数据失败
+			if (res.meta.status !== 200) {
+				return this.$message.error("获取物流进度失败");
+			}
+			//获取数据成功
+			this.progressBoxVisible = true;
+			this.progressInfo = res.data;
+			console.log(this.progressInfo);
 		}
 	},
 	mounted() {
