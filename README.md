@@ -12,10 +12,13 @@
 
 
 ---
+## 项目简介
+Back-end-management-system-E-commerce是一个基于Vue的后台管理系统，主要用于管理电商项目的后台数据，包括用户管理、商品管理、订单管理、权限管理等功能。
 
 ## 内容列表
 
 - [Back-end-management-system-E-commerce](#back-end-management-system-e-commerce)
+  - [项目简介](#项目简介)
   - [内容列表](#内容列表)
 - [Git规范](#git规范)
   - [Git分支命名](#git分支命名)
